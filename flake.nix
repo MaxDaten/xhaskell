@@ -7,6 +7,7 @@
     nix2container.url = "github:nlewo/nix2container";
     nix2container.inputs.nixpkgs.follows = "nixpkgs";
     mk-shell-bin.url = "github:rrbutani/nix-mk-shell-bin";
+    treefmt-nix.url = "github:numtide/treefmt-nix";
   };
 
   nixConfig = {
@@ -18,16 +19,19 @@
     flake-parts.lib.mkFlake { inherit inputs; } {
       imports = [
         inputs.devenv.flakeModule
+        inputs.treefmt-nix.flakeModule
       ];
       systems = [ "x86_64-linux" "i686-linux" "x86_64-darwin" "aarch64-linux" "aarch64-darwin" ];
 
-      perSystem = { config, self', inputs', pkgs, system, ... }: {
+      perSystem = { config, self', inputs', pkgs, system, lib, ... }: {
         # Per-system attributes can be defined here. The self' and inputs'
         # module parameters provide easy access to attributes of the same
         # system.
 
         # Equivalent to  inputs'.nixpkgs.legacyPackages.hello;
         packages.default = pkgs.hello;
+
+        treefmt.config = import ./treefmt.nix { inherit pkgs config; };
 
         devenv.shells.default = {
           name = "xhaskell";
@@ -50,11 +54,12 @@
             pkgs.haskellPackages.haskell-language-server
             pkgs.haskellPackages.hlint
             pkgs.haskellPackages.ormolu
-          ];
 
-          enterShell = ''
-            hello
-          '';
+            pkgs.nixpkgs-fmt
+            config.treefmt.build.wrapper
+          ] ++ lib.attrValues config.treefmt.build.programs;
+
+          enterShell = '''';
         };
 
       };
