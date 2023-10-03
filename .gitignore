@@ -25,3 +25,6 @@ cabal.project.local~
 # Dev Env
 .devenv
 .direnv
+
+# Generated
+index.html
