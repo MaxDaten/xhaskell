@@ -72,8 +72,7 @@
           packages = [
             pkgs.haskellPackages.cabal-install
             pkgs.haskellPackages.haskell-language-server
-            pkgs.haskellPackages.hlint
-            pkgs.haskellPackages.ormolu
+            pkgs.haskellPackages.ghcid
 
             pkgs.nixpkgs-fmt
             config.treefmt.build.wrapper

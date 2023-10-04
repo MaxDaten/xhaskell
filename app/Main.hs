@@ -1,3 +1,5 @@
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE ExplicitNamespaces #-}
 {-# LANGUAGE ExtendedDefaultRules #-}
 {-# LANGUAGE OverloadedStrings #-}
 
@@ -5,25 +7,63 @@ module Main where
 
 import Data.Functor.Identity (Identity)
 import Lucid
+import Network.Wai.Handler.Warp (run)
+import Servant
+  ( Application,
+    Get,
+    Proxy (..),
+    Server,
+    serve,
+    type (:>),
+  )
+import Servant.HTML.Lucid (HTML)
+
+type API = "index.html" :> Get '[HTML] (HtmlT Identity ())
+
+api :: Proxy API
+api = Proxy
+
+server :: Server API
+server = return root
+
+app :: Application
+app = serve api server
+
+port :: Int
+port = 80
+
+devPort :: Int
+devPort = 4242
 
 main :: IO ()
 main = do
-  renderToFile "index.html" $ do
-    doctype_
-    html_ $ do
-      head_ $ do
-        title_ "Lucid"
-        meta_ [charset_ "utf-8"]
-        meta_ [name_ "viewport", content_ "width=device-width, initial-scale=1"]
-        link_ [rel_ "stylesheet", type_ "text/css", href_ "style.css"]
-        tailwind
-        htmx
-      body_ [class_ "bg-gray-200"] $ do
-        header_ [class_ "text-center py-16 bg-blue-500 text-white"] $
-          h1_ [class_ "text-4xl"] "Ask SO"
-        main_ [class_ "flex flex-col justify-center mt-10"] $ do
-          p_ [class_ "w-full"] "Ask stack overflow all your questions!"
-          promptForm
+  print ("Running on port " ++ show port :: String)
+  print ("Visit: http://localhost/index.html" :: String)
+  run port app
+
+mainForDevelopment :: IO ()
+mainForDevelopment = do
+  print ("Running on port " ++ show devPort :: String)
+  print ("Visit: http://localhost:4242/index.html" :: String)
+  run devPort app
+
+root :: HtmlT Identity ()
+root = do
+  doctype_
+  html_ $ do
+    head_ $ do
+      title_ "Lucid"
+      meta_ [charset_ "utf-8"]
+      meta_ [name_ "viewport", content_ "width=device-width, initial-scale=1"]
+      link_ [rel_ "stylesheet", type_ "text/css", href_ "style.css"]
+      tailwind
+      htmx
+    body_ [class_ "bg-gray-200"] $ do
+      header_ [class_ "text-center py-16 bg-blue-500 text-white"] $
+        h1_ [class_ "text-4xl"] "Ask SO"
+      main_ [class_ "flex flex-col justify-center mt-10"] $ do
+        p_ [class_ "w-full"] "Ask stack overflow all your questions!"
+        promptForm
 
 promptForm :: HtmlT Identity ()
 promptForm = do
