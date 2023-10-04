@@ -70,7 +70,10 @@ executable xhaskell
     -- Other library packages from which modules are imported.
     build-depends:    
         base ^>=4.17.2.0,
-        lucid ^>=2.11
+        lucid ^>=2.11,
+        servant ^>=0.20,
+        servant-server ^>=0.20,
+        servant-lucid ^>=0.9,
 
 
     -- Directories containing source files.
