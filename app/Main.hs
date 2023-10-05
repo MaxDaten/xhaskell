@@ -12,19 +12,26 @@ import Servant
   ( Application,
     Get,
     Proxy (..),
+    Raw,
     Server,
     serve,
+    serveDirectoryWebApp,
+    (:<|>) (..),
     type (:>),
   )
 import Servant.HTML.Lucid (HTML)
 
-type API = "index.html" :> Get '[HTML] (HtmlT Identity ())
+type API =
+  "index.html" :> Get '[HTML] (HtmlT Identity ())
+    :<|> Raw
 
 api :: Proxy API
 api = Proxy
 
 server :: Server API
-server = return root
+server =
+  return root
+    :<|> serveDirectoryWebApp "app/static"
 
 app :: Application
 app = serve api server
@@ -52,10 +59,11 @@ root = do
   doctype_
   html_ $ do
     head_ $ do
-      title_ "Lucid"
+      title_ "Ask SO"
       meta_ [charset_ "utf-8"]
       meta_ [name_ "viewport", content_ "width=device-width, initial-scale=1"]
       link_ [rel_ "stylesheet", type_ "text/css", href_ "style.css"]
+      link_ [rel_ "manifest", href_ "site.webmanifest"]
       tailwind
       htmx
     body_ [class_ "bg-gray-200"] $ do
