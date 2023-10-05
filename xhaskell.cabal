@@ -72,10 +72,12 @@ executable xhaskell
     -- Other library packages from which modules are imported.
     build-depends:
           base ^>=4.17.2.0
-        , lucid ^>=2.11
+        , lucid2 ^>=0.0.20230706
+        , lucid2-htmx ^>=0.1
         , servant ^>=0.20
         , servant-server ^>=0.20
-        , servant-lucid ^>=0.9
+        , servant-lucid2 ^>=0.0.0.1
+        , text ^>=2.0.2
         , wai
         , warp
 
