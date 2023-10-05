@@ -23,6 +23,7 @@ import Servant
   )
 import Servant.HTML.Lucid (HTML)
 import ServerSettings (ServerSettings (..), defaultServerSettings, devServerSettings, fromEnv)
+import Text.Printf (printf)
 
 type API =
   "index.html" :> Get '[HTML] (HtmlT Identity ())
@@ -39,9 +40,6 @@ server =
 app :: Application
 app = serve api server
 
-devPort :: Int
-devPort = 4242
-
 main :: IO ()
 main = mainWithSettings =<< fromEnv defaultServerSettings
 
@@ -50,8 +48,8 @@ mainForDevelopment = mainWithSettings =<< fromEnv devServerSettings
 
 mainWithSettings :: ServerSettings -> IO ()
 mainWithSettings ServerSettings {..} = do
-  print ("Running on port " ++ show devPort :: String)
-  print ("Visit: http://localhost:4242/index.html" :: String)
+  printf "Running on port %d\n" port
+  printf "Visit: http://localhost:%d/index.html\n" port
   run port app
 
 root :: HtmlT Identity ()
