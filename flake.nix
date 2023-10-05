@@ -79,6 +79,8 @@
           ] ++ lib.attrValues config.treefmt.build.programs;
 
           enterShell = '''';
+
+          scripts.dev.exec = "ghcid";
         };
 
         apps.default.program = pkgs.xhaskell;
