@@ -9,6 +9,7 @@ module Main where
 import Data.Functor.Identity (Identity)
 import Lucid
 import Network.Wai.Handler.Warp (run)
+import PromptForm (promptForm)
 import Servant
   ( Application,
     Get,
@@ -71,12 +72,6 @@ root = do
       main_ [class_ "flex flex-col justify-center mt-10"] $ do
         p_ [class_ "w-full"] "Ask stack overflow all your questions!"
         promptForm
-
-promptForm :: HtmlT Identity ()
-promptForm = do
-  form_ [class_ "flex flex-col border-gray-300"] $ do
-    input_ [class_ "border-2 border-gray-300 p-2 rounded-lg", type_ "text", placeholder_ "Enter your question"]
-    button_ [class_ "bg-blue-500 text-white p-2 rounded-lg mt-2", type_ "submit"] "Ask"
 
 tailwind :: HtmlT Identity ()
 tailwind = script_ [src_ "https://cdn.tailwindcss.com/3.3.3"] ("" :: String)
