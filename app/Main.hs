@@ -2,6 +2,7 @@
 {-# LANGUAGE ExplicitNamespaces #-}
 {-# LANGUAGE ExtendedDefaultRules #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RecordWildCards #-}
 
 module Main where
 
@@ -20,6 +21,7 @@ import Servant
     type (:>),
   )
 import Servant.HTML.Lucid (HTML)
+import ServerSettings (ServerSettings (..), defaultServerSettings, devServerSettings)
 
 type API =
   "index.html" :> Get '[HTML] (HtmlT Identity ())
@@ -36,23 +38,20 @@ server =
 app :: Application
 app = serve api server
 
-port :: Int
-port = 80
-
 devPort :: Int
 devPort = 4242
 
 main :: IO ()
-main = do
-  print ("Running on port " ++ show port :: String)
-  print ("Visit: http://localhost/index.html" :: String)
-  run port app
+main = mainWithSettings defaultServerSettings
 
 mainForDevelopment :: IO ()
-mainForDevelopment = do
+mainForDevelopment = mainWithSettings devServerSettings
+
+mainWithSettings :: ServerSettings -> IO ()
+mainWithSettings ServerSettings {..} = do
   print ("Running on port " ++ show devPort :: String)
   print ("Visit: http://localhost:4242/index.html" :: String)
-  run devPort app
+  run port app
 
 root :: HtmlT Identity ()
 root = do
