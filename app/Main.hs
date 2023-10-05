@@ -21,7 +21,7 @@ import Servant
     type (:>),
   )
 import Servant.HTML.Lucid (HTML)
-import ServerSettings (ServerSettings (..), defaultServerSettings, devServerSettings)
+import ServerSettings (ServerSettings (..), defaultServerSettings, devServerSettings, fromEnv)
 
 type API =
   "index.html" :> Get '[HTML] (HtmlT Identity ())
@@ -42,10 +42,10 @@ devPort :: Int
 devPort = 4242
 
 main :: IO ()
-main = mainWithSettings defaultServerSettings
+main = mainWithSettings =<< fromEnv defaultServerSettings
 
 mainForDevelopment :: IO ()
-mainForDevelopment = mainWithSettings devServerSettings
+mainForDevelopment = mainWithSettings =<< fromEnv devServerSettings
 
 mainWithSettings :: ServerSettings -> IO ()
 mainWithSettings ServerSettings {..} = do
