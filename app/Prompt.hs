@@ -41,9 +41,6 @@ type PromptAPI =
   )
 {- ORMOLU_ENABLE -}
 
-promptApi :: Proxy PromptAPI
-promptApi = Proxy
-
 promptHandler :: Server PromptAPI
 promptHandler = postPrompt :<|> getPrompt
   where
@@ -83,14 +80,20 @@ answerView Answer {..} = do
   div_ [] $ do
     h2_ "Your prompt was:"
     p_ (toHtml (question prompt))
+
     h2_ "Your answer is:"
     p_ (toHtml answer)
+
     hr_ []
-    p_
-      [class_ "text-sm text-slate-500"]
-      (toHtml (printf "uuid: %s" uuidText :: String))
+
+    answerFooter
   where
     uuidText = pack $ show uuid
+    answerFooter = do
+      hr_ []
+      p_
+        [class_ "text-sm text-slate-500"]
+        (toHtml (printf "uuid: %s" uuidText :: String))
 
 instance ToHtml Prompt where
   toHtml = promptView
