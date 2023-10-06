@@ -54,7 +54,7 @@ mainWithSettings ServerSettings {..} = do
   printf "Visit: http://localhost:%d/index.html\n" port
   run port app
 
-root :: HtmlT Identity ()
+root :: (Monad m) => HtmlT m ()
 root = do
   doctype_
   html_ $ do
@@ -74,8 +74,8 @@ root = do
           div_ [class_ "w-1/2 border rounded border-gray-400 px-16 py-8 bg-gray-300"] $ do
             promptView "How do I get started with Haskell?"
 
-tailwind :: HtmlT Identity ()
+tailwind :: (Monad m) => HtmlT m ()
 tailwind = script_ [src_ "https://cdn.tailwindcss.com/3.3.3"] ("" :: String)
 
-htmx :: HtmlT Identity ()
+htmx :: (Monad m) => HtmlT m ()
 htmx = script_ [src_ "https://unpkg.com/htmx.org@1.9.6", integrity_ "sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni", crossorigin_ "anonymous"] ("" :: String)
