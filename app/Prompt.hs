@@ -92,16 +92,6 @@ answerView Answer {..} = do
   where
     uuidText = pack $ show uuid
 
-prompt_ :: (Monad m) => HtmlT m ()
-prompt_ =
-  div_
-    [ hxGet_ "/prompt",
-      hxTarget_ "this",
-      hxSwap_ "outerHTML",
-      hxTrigger_ "load"
-    ]
-    "Loading..."
-
 instance ToHtml Prompt where
   toHtml = promptView
   toHtmlRaw = toHtml
