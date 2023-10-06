@@ -48,8 +48,44 @@ promptHandler = postPrompt :<|> getPrompt
     getPrompt :: Handler Prompt
     getPrompt = return (Prompt {question = "How do I get started with Haskell?"})
 
--- The Component
+-- Views
 ------------------
+
+promptView :: (Monad m) => Prompt -> HtmlT m ()
+promptView Prompt {..} = do
+  h2_ [class_ ""] "Ask stack overflow all your questions!"
+  form_
+    [ class_ "flex flex-col border-gray-300",
+      hxPost_ "/prompt",
+      hxPushUrl_ "true"
+    ]
+    $ do
+      input_
+        [ class_ "border-2 border-gray-300 p-2 rounded-lg",
+          name_ "question",
+          type_ "text",
+          placeholder_ "Enter your question",
+          value_ (pack question)
+        ]
+      button_
+        [ class_ "bg-blue-500 text-white p-2 rounded-lg mt-2",
+          type_ "submit"
+        ]
+        "Ask"
+
+answerView :: (Monad m) => Answer -> HtmlT m ()
+answerView Answer {..} = do
+  div_ [] $ do
+    h2_ "Your prompt was:"
+    p_ (toHtml (question prompt))
+    h2_ "Your answer is:"
+    p_ (toHtml answer)
+    hr_ []
+    p_
+      [class_ "text-sm text-slate-500"]
+      (toHtml (printf "uuid: %s" uuidText :: String))
+  where
+    uuidText = pack $ show uuid
 
 prompt_ :: (Monad m) => HtmlT m ()
 prompt_ =
@@ -62,28 +98,11 @@ prompt_ =
     "Loading..."
 
 instance ToHtml Prompt where
-  toHtml Prompt {..} = do
-    h2_ [class_ ""] "Ask stack overflow all your questions!"
-    form_ [hxPost_ "/prompt", class_ "flex flex-col border-gray-300", hxPushUrl_ "true"] $ do
-      input_ [name_ "question", class_ "border-2 border-gray-300 p-2 rounded-lg", type_ "text", placeholder_ "Enter your question", value_ (pack question)]
-      button_
-        [class_ "bg-blue-500 text-white p-2 rounded-lg mt-2", type_ "submit"]
-        "Ask"
+  toHtml = promptView
   toHtmlRaw = toHtml
 
 instance ToHtml Answer where
-  toHtml Answer {..} = do
-    div_ [] $ do
-      h2_ "Your prompt was:"
-      p_ (toHtml (question prompt))
-      h2_ "Your answer is:"
-      p_ (toHtml answer)
-      hr_ []
-      p_
-        [class_ "text-sm text-slate-500"]
-        (toHtml (printf "uuid: %s" uuidText :: String))
-    where
-      uuidText = pack $ show uuid
+  toHtml = answerView
   toHtmlRaw = toHtml
 
 instance FromForm Prompt
