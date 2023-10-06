@@ -4,6 +4,7 @@
 
 module Prompt where
 
+import Data.String (IsString)
 import Data.Text (pack)
 import Data.UUID (UUID, nil)
 import GHC.Generics (Generic)
@@ -14,10 +15,13 @@ import Servant.HTML.Lucid (HTML)
 import Text.Printf (printf)
 import Web.FormUrlEncoded (FromForm (..))
 
+-- API
+------------------
+
 newtype Prompt = Prompt
   { question :: String
   }
-  deriving (Eq, Show, Generic)
+  deriving (Eq, Show, Generic, Semigroup, Monoid, IsString)
 
 data Answer = Answer
   { uuid :: UUID,
@@ -26,15 +30,16 @@ data Answer = Answer
   }
   deriving (Eq, Show, Generic)
 
+{- ORMOLU_DISABLE -}
 type PromptAPI =
-  "prompt"
-    :> (
-         -- POST
-         ReqBody '[FormUrlEncoded] Prompt :> Post '[HTML] Answer
-           :<|>
-           -- GET
-           Get '[HTML] Prompt
-       )
+  "prompt" :> 
+  (
+    -- POST
+    ReqBody '[FormUrlEncoded] Prompt :> Post '[HTML] Answer :<|>
+    -- GET
+    Get '[HTML] Prompt
+  )
+{- ORMOLU_ENABLE -}
 
 promptApi :: Proxy PromptAPI
 promptApi = Proxy

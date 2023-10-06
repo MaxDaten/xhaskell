@@ -9,7 +9,7 @@ module Main where
 import Data.Functor.Identity (Identity)
 import Lucid
 import Network.Wai.Handler.Warp (run)
-import Prompt (PromptAPI, promptHandler, prompt_)
+import Prompt (PromptAPI, promptHandler, promptView)
 import Servant
   ( Application,
     Get,
@@ -72,7 +72,7 @@ root = do
       main_ [class_ "flex flex-col justify-center mt-10"] $ do
         div_ [class_ "flex justify-center"] $ do
           div_ [class_ "w-1/2 border rounded border-gray-400 px-16 py-8 bg-gray-300"] $ do
-            prompt_
+            promptView "How do I get started with Haskell?"
 
 tailwind :: HtmlT Identity ()
 tailwind = script_ [src_ "https://cdn.tailwindcss.com/3.3.3"] ("" :: String)
