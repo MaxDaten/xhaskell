@@ -6,3 +6,9 @@ source-repository-package
     type: git
     location: https://github.com/Briends/servant-lucid2.git
     tag: b79e3d7b39f07d3d2ab33cf6c229bc6e4e20818d
+
+-- lucid2-hyperscript
+source-repository-package
+    type: git
+    location: https://github.com/Briends/lucid2-hyperscript.git
+    tag: 8d37673c3b10c4163db24626c94ed24dff5f0905

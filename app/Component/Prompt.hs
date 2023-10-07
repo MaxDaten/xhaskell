@@ -71,7 +71,6 @@ promptHandler = postPrompt :<|> getPrompt
 promptView :: (Monad m) => Prompt -> HtmlT m ()
 promptView Prompt {..} = do
   h2_ [class_ ""] "Ask stack overflow all your questions!"
-  spinner [id_ "loading-answer"]
 
   form_
     [ class_ "flex flex-col border-gray-300",
@@ -94,6 +93,7 @@ promptView Prompt {..} = do
         ]
         $ do
           span_ "Ask"
+          spinner [id_ "loading-answer", class_ "hidden"]
 
 answerView :: (Monad m) => Answer -> HtmlT m ()
 answerView Answer {..} = do
