@@ -6,10 +6,10 @@
 
 module Main where
 
+import Component.Prompt (PromptAPI, promptHandler, promptView)
 import Data.Functor.Identity (Identity)
 import Lucid
 import Network.Wai.Handler.Warp (run)
-import Prompt (PromptAPI, promptHandler, promptView)
 import Servant
   ( Application,
     Get,

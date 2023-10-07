@@ -2,7 +2,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 
-module Prompt where
+module Component.Prompt where
 
 import Control.Concurrent (threadDelay)
 import Control.Monad (void)
