@@ -4,6 +4,9 @@
 
 module Prompt where
 
+import Control.Concurrent (threadDelay)
+import Control.Monad (void)
+import Control.Monad.IO.Class (liftIO)
 import Data.String (IsString)
 import Data.Text (pack)
 import Data.UUID (UUID, nil)
@@ -45,7 +48,10 @@ promptHandler :: Server PromptAPI
 promptHandler = postPrompt :<|> getPrompt
   where
     postPrompt :: Prompt -> Handler Answer
-    postPrompt prompt = return (Answer {uuid = nil, prompt, answer = "Just start!"})
+    postPrompt prompt = do
+      -- wait for 2 seconds to simulate a long running process
+      void $ liftIO (threadDelay 2000000)
+      return (Answer {uuid = nil, prompt, answer = "Just start!"})
 
     getPrompt :: Handler Prompt
     getPrompt = return (Prompt {question = "How do I get started with Haskell?"})
