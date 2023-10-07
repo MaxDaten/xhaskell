@@ -2,7 +2,15 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
 
-module Component.Prompt where
+module Component.Prompt
+  ( PromptAPI,
+    Prompt (..),
+    Answer (..),
+    promptHandler,
+    promptView,
+    answerView,
+  )
+where
 
 import Control.Concurrent (threadDelay)
 import Control.Monad (void)
