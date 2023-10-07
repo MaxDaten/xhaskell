@@ -65,7 +65,8 @@ executable xhaskell
   -- Modules included in this executable, other than Main.
   other-modules:
     ServerSettings
-    Prompt
+    Component.Prompt
+    Component.BodyWrapper
 
   -- LANGUAGE extensions used by modules in this package.
   -- other-extensions:
