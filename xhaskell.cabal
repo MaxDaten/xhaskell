@@ -68,6 +68,7 @@ executable xhaskell
     Component.Root
     Component.Prompt
     Component.BodyWrapper
+    Component.Spinner
 
   -- LANGUAGE extensions used by modules in this package.
   -- other-extensions:
@@ -78,7 +79,7 @@ executable xhaskell
     , lucid2          ^>=0.0.20230706
     , lucid2-htmx     ^>=0.1
     -- , lucid-hyperscript -- for the future
-    -- , lucid-svg        -- for the future
+    -- , lucid-svg       ^>=0.7
     , servant         ^>=0.20
     , servant-lucid2  ^>=0.0.0.1
     , servant-server  ^>=0.20

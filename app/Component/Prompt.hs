@@ -12,6 +12,7 @@ module Component.Prompt
   )
 where
 
+import Component.Spinner (spinner)
 import Control.Concurrent (threadDelay)
 import Control.Monad (void)
 import Control.Monad.IO.Class (liftIO)
@@ -88,6 +89,7 @@ promptView Prompt {..} = do
           type_ "submit"
         ]
         "Ask"
+      spinner []
 
 answerView :: (Monad m) => Answer -> HtmlT m ()
 answerView Answer {..} = do
