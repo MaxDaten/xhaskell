@@ -7,10 +7,10 @@
 module Main where
 
 import Component.Prompt (PromptAPI, promptHandler)
+import Component.Root (root)
 import Data.Functor.Identity (Identity)
 import Lucid
 import Network.Wai.Handler.Warp (run)
-import Root (root)
 import Servant
   ( Application,
     Get,
@@ -27,7 +27,8 @@ import ServerSettings (ServerSettings (..), defaultServerSettings, devServerSett
 import Text.Printf (printf)
 
 type API =
-  "index.html" :> Get '[HTML] (HtmlT Identity ())
+  Get '[HTML] (HtmlT Identity ())
+    :<|> "index.html" :> Get '[HTML] (HtmlT Identity ())
     :<|> PromptAPI
     :<|> Raw
 
@@ -37,6 +38,7 @@ api = Proxy
 server :: Server API
 server =
   return root
+    :<|> return root
     :<|> promptHandler
     :<|> serveDirectoryWebApp "app/static"
 

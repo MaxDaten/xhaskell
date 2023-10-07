@@ -1,7 +1,7 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Root where
+module Component.Root where
 
 import Component.BodyWrapper (bodyWrapper)
 import Component.Prompt (promptView)
