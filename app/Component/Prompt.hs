@@ -71,10 +71,14 @@ promptHandler = postPrompt :<|> getPrompt
 promptView :: (Monad m) => Prompt -> HtmlT m ()
 promptView Prompt {..} = do
   h2_ [class_ ""] "Ask stack overflow all your questions!"
+  spinner [id_ "loading-answer"]
+
   form_
     [ class_ "flex flex-col border-gray-300",
       hxPost_ "/prompt",
-      hxPushUrl_ "true"
+      hxPushUrl_ "true",
+      hxIndicator_ "#loading-answer",
+      hxExt_ "debug"
     ]
     $ do
       input_
@@ -88,8 +92,8 @@ promptView Prompt {..} = do
         [ class_ "bg-blue-500 text-white p-2 rounded-lg mt-2",
           type_ "submit"
         ]
-        "Ask"
-      spinner []
+        $ do
+          span_ "Ask"
 
 answerView :: (Monad m) => Answer -> HtmlT m ()
 answerView Answer {..} = do
