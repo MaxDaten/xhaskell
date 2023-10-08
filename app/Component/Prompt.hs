@@ -14,8 +14,7 @@ module Component.Prompt
 where
 
 import Component.Spinner (spinner)
-import Control.Concurrent (threadDelay)
-import Control.Monad (void)
+import Control.Exception (evaluate)
 import Control.Monad.IO.Class (liftIO)
 import Data.String (IsString)
 import Data.Text (pack)
@@ -26,6 +25,7 @@ import Lucid.Htmx
 import Lucid.Hyperscript (__)
 import Servant
 import Servant.HTML.Lucid (HTML)
+import System.TimeIt (timeItT)
 import Text.Printf (printf)
 import Web.FormUrlEncoded (FromForm (..))
 
@@ -40,7 +40,8 @@ newtype Prompt = Prompt
 data Answer = Answer
   { uuid :: UUID,
     prompt :: Prompt,
-    answer :: String
+    answer :: String,
+    durationSeconds :: Double
   }
   deriving (Eq, Show, Generic)
 
@@ -60,9 +61,15 @@ promptHandler = postPrompt :<|> getPrompt
   where
     postPrompt :: Prompt -> Handler Answer
     postPrompt prompt = do
-      -- wait for 2 seconds to simulate a long running process
-      void $ liftIO (threadDelay 5000000)
-      return (Answer {uuid = nil, prompt, answer = "Just start!"})
+      (durationSeconds, result) <-
+        liftIO $
+          timeItT $
+            -- wait for 5 seconds to simulate a long running process
+            evaluate (sum [1 .. 100000000] :: Integer)
+      -- threadDelay 5000000
+      -- print result
+      liftIO $ printf "Result: %d\n" result
+      return (Answer {uuid = nil, durationSeconds, prompt, answer = "Just start!"})
 
     getPrompt :: Handler Prompt
     getPrompt = return (Prompt {question = "How do I get started with Haskell?"})
@@ -72,17 +79,16 @@ promptHandler = postPrompt :<|> getPrompt
 
 promptView :: (Monad m) => Prompt -> HtmlT m ()
 promptView Prompt {..} = do
-  h2_ [class_ ""] "Ask stack overflow all your questions!"
-
   form_
     [ id_ "question-form",
-      class_ "flex flex-col border-gray-300",
+      class_ "flex flex-col border-gray-300 space-y-4",
       hxPost_ "/prompt",
       hxPushUrl_ "true",
       hxIndicator_ "#loading-spinner",
       hxExt_ "debug"
     ]
     $ do
+      h2_ [class_ "italic"] "Ask stack overflow all your questions!"
       input_
         [ class_ "border-2 border-gray-300 p-2 rounded-lg",
           name_ "question",
@@ -113,12 +119,12 @@ promptView Prompt {..} = do
 
 answerView :: (Monad m) => Answer -> HtmlT m ()
 answerView Answer {..} = do
-  div_ [] $ do
+  div_ [class_ "space-y-2"] $ do
     h2_ "Your prompt was:"
-    p_ (toHtml (question prompt))
+    p_ [class_ "italic pl-2"] (toHtml (question prompt))
 
     h2_ "Your answer is:"
-    p_ (toHtml answer)
+    p_ [class_ "italic pl-2"] (toHtml answer)
 
     hr_ []
 
@@ -126,10 +132,13 @@ answerView Answer {..} = do
   where
     uuidText = pack $ show uuid
     answerFooter = do
-      hr_ []
-      p_
-        [class_ "text-sm text-slate-500"]
-        (toHtml (printf "uuid: %s" uuidText :: String))
+      span_ [class_ "flex flex-row justify-between"] $ do
+        p_
+          [class_ "font-mono text-[0.5rem] text-slate-500"]
+          (toHtml (printf "uuid: %s" uuidText :: String))
+        p_
+          [class_ "font-mono text-[0.5rem] text-slate-500"]
+          (toHtml (printf "duration: %6.3fs" durationSeconds :: String))
 
 instance ToHtml Prompt where
   toHtml = promptView
