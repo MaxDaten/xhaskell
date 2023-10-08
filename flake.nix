@@ -29,17 +29,23 @@
                 servant-lucid2 = hself.callCabal2nix "servant-lucid2"
                   (builtins.fetchGit {
                     url = "https://github.com/Briends/servant-lucid2.git";
-                    rev = "b79e3d7b39f07d3d2ab33cf6c229bc6e4e20818d";
-                    # sha256 = "0xq5jz3q8z6jg1j8z6zv7q5q5z1v6jz7j3f6q5z1v6jz7j3f6q5z";
+                    rev = "ba035126b063988a7779d13650f180501a9e43d0";
                   })
                   { };
                 lucid2-hyperscript = hself.callCabal2nix "lucid2-hyperscript"
                   (builtins.fetchGit {
                     url = "https://github.com/Briends/lucid2-hyperscript.git";
                     rev = "8d37673c3b10c4163db24626c94ed24dff5f0905";
-                    # sha256 = "0xq5jz3q8z6jg1j8z6zv7q5q5z1v6jz7j3f6q5z1v6jz7j3f6q5z";
                   })
                   { };
+                # currently ghc96 is broken with ormolu, so we have to stay with current ghc, but have to override servant packages
+                servant = hself.servant_0_20;
+                servant-server = hself.servant-server_0_20;
+                servant-client = hself.servant-client_0_20;
+                servant-client-core = hself.servant-client-core_0_20;
+                servant-swagger = hself.servant-swagger_1_2;
+                servant-conduit = hself.servant-conduit_0_16;
+                lucid2-htmx = prev.haskell.lib.unmarkBroken (prev.haskell.lib.doJailbreak hsuper.lucid2-htmx);
               };
           };
         xhaskell = final.haskell.lib.compose.justStaticExecutables final.haskellPackages.xhaskell;
@@ -52,7 +58,11 @@
       ];
       systems = [ "x86_64-linux" "i686-linux" "x86_64-darwin" "aarch64-linux" "aarch64-darwin" ];
 
-      perSystem = { config, self', inputs', pkgs, system, lib, ... }: {
+      perSystem = { config, self', inputs', pkgs, system, lib, ... }: 
+      let
+        ghcPackage = pkgs.ghc; # Currently pkgs.haskell.compiler.ghc96 is broken with ormolu
+      in
+      {
         _module.args.pkgs = import nixpkgs {
           inherit system;
           overlays = [
@@ -80,6 +90,7 @@
           languages.nix.enable = true;
           languages.haskell = {
             enable = true;
+            package = ghcPackage;
             stack = null;
           };
 
