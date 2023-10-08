@@ -41,7 +41,7 @@ data Answer = Answer
   { uuid :: UUID,
     prompt :: Prompt,
     answer :: String,
-    durationSeconds :: Double
+    cpuTimeSeconds :: Double
   }
   deriving (Eq, Show, Generic)
 
@@ -61,7 +61,7 @@ promptHandler = postPrompt :<|> getPrompt
   where
     postPrompt :: Prompt -> Handler Answer
     postPrompt prompt = do
-      (durationSeconds, result) <-
+      (cpuTimeSeconds, result) <-
         liftIO $
           timeItT $
             -- wait for 5 seconds to simulate a long running process
@@ -69,7 +69,7 @@ promptHandler = postPrompt :<|> getPrompt
       -- threadDelay 5000000
       -- print result
       liftIO $ printf "Result: %d\n" result
-      return (Answer {uuid = nil, durationSeconds, prompt, answer = "Just start!"})
+      return (Answer {uuid = nil, cpuTimeSeconds, prompt, answer = "Just start!"})
 
     getPrompt :: Handler Prompt
     getPrompt = return (Prompt {question = "How do I get started with Haskell?"})
@@ -138,7 +138,7 @@ answerView Answer {..} = do
           (toHtml (printf "uuid: %s" uuidText :: String))
         p_
           [class_ "font-mono text-[0.5rem] text-slate-500"]
-          (toHtml (printf "duration: %6.3fs" durationSeconds :: String))
+          (toHtml (printf "cpu time: %6.3fs" cpuTimeSeconds :: String))
 
 instance ToHtml Prompt where
   toHtml = promptView
