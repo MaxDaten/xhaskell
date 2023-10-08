@@ -1,0 +1,28 @@
+name: CI
+on:
+  - push
+  - pull_request
+jobs:
+  nix-build:
+    name: Nix build
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-beta, macos-latest]
+        include:
+          - os: ubuntu-beta
+            system: x86_64-linux
+          - os: macos-latest
+            system: x86_64-darwin
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@v22
+      - name: 🔑 Add Organization SSH key
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.GITOPS_ACCESS }}
+      - name: ✅ Check
+        run: nix flake check --impure
+      - name: 🐚 Build Shell
+        run: nix build -L '.#devShells.${{ matrix.system }}.default' --impure
