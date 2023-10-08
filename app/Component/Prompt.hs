@@ -114,9 +114,6 @@ promptView Prompt {..} = do
               class_ "hidden"
             ]
 
--- class_ "hidden"
--- ]
-
 answerView :: (Monad m) => Answer -> HtmlT m ()
 answerView Answer {..} = do
   div_ [class_ "space-y-2"] $ do
