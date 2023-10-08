@@ -12,7 +12,7 @@ jobs:
         include:
           - os: ubuntu-beta
             system: x86_64-linux
-          - os: macos-latest
+          - os: macos-latest-xlarge
             system: x86_64-darwin
     runs-on: ${{ matrix.os }}
     steps:
