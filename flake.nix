@@ -13,6 +13,7 @@
   nixConfig = {
     extra-trusted-public-keys = "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw=";
     extra-substituters = "https://devenv.cachix.org";
+    allow-broken = true;
   };
 
   outputs = inputs@{ nixpkgs, flake-parts, ... }:
@@ -21,10 +22,24 @@
         haskell =
           prev.haskell
           // {
-            packageOverrides = hfinal: hprev:
-              prev.haskell.packageOverrides hfinal hprev
+            packageOverrides = hself: hsuper:
+              prev.haskell.packageOverrides hself hsuper
               // {
-                xhaskell = hfinal.callCabal2nix "xhaskell" ./. { };
+                xhaskell = hself.callCabal2nix "xhaskell" ./. { };
+                servant-lucid2 = hself.callCabal2nix "servant-lucid2"
+                  (builtins.fetchGit {
+                    url = "https://github.com/Briends/servant-lucid2.git";
+                    rev = "b79e3d7b39f07d3d2ab33cf6c229bc6e4e20818d";
+                    # sha256 = "0xq5jz3q8z6jg1j8z6zv7q5q5z1v6jz7j3f6q5z1v6jz7j3f6q5z";
+                  })
+                  { };
+                lucid2-hyperscript = hself.callCabal2nix "lucid2-hyperscript"
+                  (builtins.fetchGit {
+                    url = "https://github.com/Briends/lucid2-hyperscript.git";
+                    rev = "8d37673c3b10c4163db24626c94ed24dff5f0905";
+                    # sha256 = "0xq5jz3q8z6jg1j8z6zv7q5q5z1v6jz7j3f6q5z1v6jz7j3f6q5z";
+                  })
+                  { };
               };
           };
         xhaskell = final.haskell.lib.compose.justStaticExecutables final.haskellPackages.xhaskell;
