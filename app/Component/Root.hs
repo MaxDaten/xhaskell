@@ -7,6 +7,7 @@ import Component.BodyWrapper (bodyWrapper)
 import Component.Prompt (promptView)
 import Data.Text (Text)
 import Lucid
+import Lucid.Hyperscript (useHyperscript)
 
 root :: (Monad m) => HtmlT m ()
 root = do
@@ -19,6 +20,7 @@ root = do
       link_ [rel_ "stylesheet", type_ "text/css", href_ "style.css"]
       link_ [rel_ "manifest", href_ "site.webmanifest"]
       tailwind
+      useHyperscript
       -- https://htmx.org/extensions/
       htmx
         [ "class-tools",
