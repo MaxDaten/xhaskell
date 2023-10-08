@@ -1,5 +1,6 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE QuasiQuotes #-}
 {-# LANGUAGE RecordWildCards #-}
 
 module Component.Prompt
@@ -22,6 +23,7 @@ import Data.UUID (UUID, nil)
 import GHC.Generics (Generic)
 import Lucid
 import Lucid.Htmx
+import Lucid.Hyperscript (__)
 import Servant
 import Servant.HTML.Lucid (HTML)
 import Text.Printf (printf)
@@ -59,7 +61,7 @@ promptHandler = postPrompt :<|> getPrompt
     postPrompt :: Prompt -> Handler Answer
     postPrompt prompt = do
       -- wait for 2 seconds to simulate a long running process
-      void $ liftIO (threadDelay 2000000)
+      void $ liftIO (threadDelay 5000000)
       return (Answer {uuid = nil, prompt, answer = "Just start!"})
 
     getPrompt :: Handler Prompt
@@ -73,10 +75,11 @@ promptView Prompt {..} = do
   h2_ [class_ ""] "Ask stack overflow all your questions!"
 
   form_
-    [ class_ "flex flex-col border-gray-300",
+    [ id_ "question-form",
+      class_ "flex flex-col border-gray-300",
       hxPost_ "/prompt",
       hxPushUrl_ "true",
-      hxIndicator_ "#loading-answer",
+      hxIndicator_ "#loading-spinner",
       hxExt_ "debug"
     ]
     $ do
@@ -88,12 +91,25 @@ promptView Prompt {..} = do
           value_ (pack question)
         ]
       button_
-        [ class_ "bg-blue-500 text-white p-2 rounded-lg mt-2",
-          type_ "submit"
+        [ class_ "flex items-center justify-center bg-blue-500 text-white p-2 rounded-lg mt-2 hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-gray-600 transition-colors duration-200 ease-in-out",
+          type_ "submit",
+          [__|
+            on htmx:beforeSend from #question-form
+              log "¿Sending question?"
+              toggle @disabled on me
+              toggle .hidden on #button-text
+              toggle .hidden on #loading-spinner
+          |]
         ]
         $ do
-          span_ "Ask"
-          spinner [id_ "loading-answer", class_ "hidden"]
+          span_ [id_ "button-text"] "Ask"
+          spinner
+            [ id_ "loading-spinner",
+              class_ "hidden"
+            ]
+
+-- class_ "hidden"
+-- ]
 
 answerView :: (Monad m) => Answer -> HtmlT m ()
 answerView Answer {..} = do

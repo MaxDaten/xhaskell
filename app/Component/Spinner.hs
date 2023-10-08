@@ -10,7 +10,7 @@ import Template (htmlTemplate)
 spinner :: (Monad m) => [Attributes] -> HtmlT m ()
 spinner attributes = do
   span_
-    ( [ class_ "w-16 w-16 flex justify-center p-4 transition-opacity duration-200 ease-in-out"
+    ( [ class_ "flex justify-center transition-opacity duration-200 ease-in-out"
       ]
         <> attributes
     )
