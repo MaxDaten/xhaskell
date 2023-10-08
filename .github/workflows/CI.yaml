@@ -8,7 +8,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-beta, macos-latest]
+        os: [ubuntu-beta, macos-latest-xlarge]
         include:
           - os: ubuntu-beta
             system: x86_64-linux
