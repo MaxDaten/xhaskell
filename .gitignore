@@ -28,3 +28,5 @@ cabal.project.local~
 
 # Generated
 index.html
+flake.nix
+result
