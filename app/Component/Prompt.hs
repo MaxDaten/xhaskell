@@ -79,7 +79,7 @@ promptView :: (Monad m) => Prompt -> HtmlT m ()
 promptView Prompt {..} = do
   form_
     [ id_ "question-form",
-      class_ "flex flex-col border-gray-300 space-y-4",
+      class_ "flex flex-col space-y-4",
       hxPost_ "/prompt",
       hxPushUrl_ "true",
       hxIndicator_ "#loading-spinner",
