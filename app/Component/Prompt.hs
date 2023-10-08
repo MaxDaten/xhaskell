@@ -66,8 +66,6 @@ promptHandler = postPrompt :<|> getPrompt
           timeItT $
             -- wait for 5 seconds to simulate a long running process
             evaluate (sum [1 .. 100000000] :: Integer)
-      -- threadDelay 5000000
-      -- print result
       liftIO $ printf "Result: %d\n" result
       return (Answer {uuid = nil, cpuTimeSeconds, prompt, answer = "Just start!"})
 
@@ -88,7 +86,7 @@ promptView Prompt {..} = do
       hxExt_ "debug"
     ]
     $ do
-      h2_ [class_ "italic"] "Ask stack overflow all your questions!"
+      h2_ [class_ "italic"] "Ask all your questions!"
       input_
         [ class_ "border-2 border-gray-300 p-2 rounded-lg",
           name_ "question",
@@ -143,6 +141,7 @@ instance ToHtml Prompt where
 
 instance ToHtml Answer where
   toHtml = answerView
+  toHtmlRaw :: (Monad m) => Answer -> HtmlT m ()
   toHtmlRaw = toHtml
 
 instance FromForm Prompt
