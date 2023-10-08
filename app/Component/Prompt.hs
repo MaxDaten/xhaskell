@@ -65,7 +65,7 @@ promptHandler = postPrompt :<|> getPrompt
         liftIO $
           timeItT $
             -- wait for 5 seconds to simulate a long running process
-            evaluate (sum [1 .. 100000000] :: Integer)
+            evaluate (sum [1 .. 300000000] :: Integer)
       liftIO $ printf "Result: %d\n" result
       return (Answer {uuid = nil, cpuTimeSeconds, prompt, answer = "Just start!"})
 
