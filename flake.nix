@@ -58,58 +58,58 @@
       ];
       systems = [ "x86_64-linux" "i686-linux" "x86_64-darwin" "aarch64-linux" "aarch64-darwin" ];
 
-      perSystem = { config, self', inputs', pkgs, system, lib, ... }: 
-      let
-        ghcPackage = pkgs.ghc; # Currently pkgs.haskell.compiler.ghc96 is broken with ormolu
-      in
-      {
-        _module.args.pkgs = import nixpkgs {
-          inherit system;
-          overlays = [
-            overlay
-          ];
-        };
-        # Per-system attributes can be defined here. The self' and inputs'
-        # module parameters provide easy access to attributes of the same
-        # system.
+      perSystem = { config, self', inputs', pkgs, system, lib, ... }:
+        let
+          ghcPackage = pkgs.ghc; # Currently pkgs.haskell.compiler.ghc96 is broken with ormolu
+        in
+        {
+          _module.args.pkgs = import nixpkgs {
+            inherit system;
+            overlays = [
+              overlay
+            ];
+          };
+          # Per-system attributes can be defined here. The self' and inputs'
+          # module parameters provide easy access to attributes of the same
+          # system.
 
-        # Equivalent to  inputs'.nixpkgs.legacyPackages.hello;
-        packages.default = pkgs.xhaskell;
+          # Equivalent to  inputs'.nixpkgs.legacyPackages.hello;
+          packages.default = pkgs.xhaskell;
 
-        treefmt.config = import ./treefmt.nix { inherit pkgs config; };
+          treefmt.config = import ./treefmt.nix { inherit pkgs config; };
 
-        devenv.shells.default = {
-          name = "xhaskell";
+          devenv.shells.default = {
+            name = "xhaskell";
 
-          imports = [
-            # This is just like the imports in devenv.nix.
-            # See https://devenv.sh/guides/using-with-flake-parts/#import-a-devenv-module
-            # ./devenv-foo.nix
-          ];
+            imports = [
+              # This is just like the imports in devenv.nix.
+              # See https://devenv.sh/guides/using-with-flake-parts/#import-a-devenv-module
+              # ./devenv-foo.nix
+            ];
 
-          languages.nix.enable = true;
-          languages.haskell = {
-            enable = true;
-            package = ghcPackage;
-            stack = null;
+            languages.nix.enable = true;
+            languages.haskell = {
+              enable = true;
+              package = ghcPackage;
+              stack = null;
+            };
+
+            # https://devenv.sh/reference/options/
+            packages = [
+              pkgs.haskellPackages.cabal-install
+              pkgs.haskellPackages.haskell-language-server
+              pkgs.haskellPackages.ghcid
+
+              pkgs.nixpkgs-fmt
+              config.treefmt.build.wrapper
+            ] ++ lib.attrValues config.treefmt.build.programs;
+
+            scripts.dev.exec = "ghcid";
           };
 
-          # https://devenv.sh/reference/options/
-          packages = [
-            pkgs.haskellPackages.cabal-install
-            pkgs.haskellPackages.haskell-language-server
-            pkgs.haskellPackages.ghcid
+          apps.default.program = pkgs.xhaskell;
 
-            pkgs.nixpkgs-fmt
-            config.treefmt.build.wrapper
-          ] ++ lib.attrValues config.treefmt.build.programs;
-
-          scripts.dev.exec = "ghcid";
         };
-
-        apps.default.program = pkgs.xhaskell;
-
-      };
       flake = {
         # The usual flake attributes can be defined here, including system-
         # agnostic ones like nixosModule and system-enumerating ones, although
