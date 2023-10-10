@@ -31,12 +31,12 @@ final: prev: {
             })
             { };
           # currently ghc96 is broken with ormolu, so we have to stay with current ghc, but have to override servant packages
-          servant = hself.servant_0_20;
-          servant-server = hself.servant-server_0_20;
-          servant-client = hself.servant-client_0_20;
-          servant-client-core = hself.servant-client-core_0_20;
-          servant-swagger = hself.servant-swagger_1_2;
-          servant-conduit = hself.servant-conduit_0_16;
+          # servant = hself.servant_0_20;
+          # servant-server = hself.servant-server_0_20;
+          # servant-client = hself.servant-client_0_20;
+          # servant-client-core = hself.servant-client-core_0_20;
+          # servant-swagger = hself.servant-swagger_1_2;
+          # servant-conduit = hself.servant-conduit_0_16;
           lucid2-htmx = prev.haskell.lib.unmarkBroken (prev.haskell.lib.doJailbreak hsuper.lucid2-htmx);
         };
     };
