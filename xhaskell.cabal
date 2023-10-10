@@ -93,8 +93,6 @@ executable xhaskell
     , wai
     , warp
 
-  -- , lucid-hyperscript -- for the future
-  -- , lucid-svg       ^>=0.7
   -- Directories containing source files.
   hs-source-dirs:   app
 
