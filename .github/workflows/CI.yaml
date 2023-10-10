@@ -24,3 +24,5 @@ jobs:
         run: nix build -L '.#devShells.${{ matrix.system }}.default' --impure
       - name: 📦 Build Package
         run: nix build -L '.#packages.${{ matrix.system }}.default' --impure
+      - name: 🚛 Build Container
+        run: nix build -L '.#packages.${{ matrix.system }}.container-xhaskell-x86_64-linux' --impure
