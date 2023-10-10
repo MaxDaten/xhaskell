@@ -76,7 +76,7 @@ executable xhaskell
 
   -- Other library packages from which modules are imported.
   build-depends:
-    , base                ^>=4.17
+    , base                >=4.9           && <4.19
     , haskell-src-meta    ^>=0.8.12
     , here                ^>=1.2
     , http-api-data
