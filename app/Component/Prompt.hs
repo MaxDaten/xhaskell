@@ -86,7 +86,7 @@ promptView Prompt {..} = do
       hxExt_ "debug"
     ]
     $ do
-      h2_ [class_ "italic"] "Ask all your questions!"
+      h2_ [class_ "italic text-indigo-200"] "Ask all your questions!"
       input_
         [ class_ "border-2 border-gray-300 p-2 rounded-lg",
           name_ "question",
@@ -95,7 +95,7 @@ promptView Prompt {..} = do
           value_ (pack question)
         ]
       button_
-        [ class_ "flex items-center justify-center bg-blue-500 text-white p-2 rounded-lg mt-2 hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-gray-600 transition-colors duration-200 ease-in-out",
+        [ class_ "flex items-center ring-1 ring-inset ring-white/20 justify-center bg-gradient-to-br from-blue-500/50 via-blue-900/50 to-gray-900/50 hover:from-blue-500/100 hover:ring-black/20 text-white p-2 rounded-xl mt-2 disabled:cursor-not-allowed disabled:bg-gray-600 transition-colors duration-200 ease-in-out",
           type_ "submit",
           [__|
             on htmx:beforeSend from #question-form
@@ -114,7 +114,7 @@ promptView Prompt {..} = do
 
 answerView :: (Monad m) => Answer -> HtmlT m ()
 answerView Answer {..} = do
-  div_ [class_ "space-y-2"] $ do
+  div_ [class_ "space-y-2 text-white"] $ do
     h2_ "Your prompt was:"
     p_ [class_ "italic pl-2"] (toHtml (question prompt))
 
