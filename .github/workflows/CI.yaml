@@ -22,3 +22,5 @@ jobs:
         run: nix flake check --impure
       - name: 🐚 Build Shell
         run: nix build -L '.#devShells.${{ matrix.system }}.default' --impure
+      - name: 📦 Build Package
+        run: nix build -L '.#packages.${{ matrix.system }}.default' --impure

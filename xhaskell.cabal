@@ -83,9 +83,9 @@ executable xhaskell
     , lucid2              ^>=0.0.20230706
     , lucid2-htmx         ^>=0.1
     , lucid2-hyperscript  ^>=0.1
-    , servant             ^>=0.20
+    , servant             ^>=0.19
     , servant-lucid2      ^>=0.0.0.1
-    , servant-server      ^>=0.20
+    , servant-server      ^>=0.19
     , template-haskell    ^>=2.19.0.0
     , text                ^>=2.0.2
     , timeit              ^>=2.0

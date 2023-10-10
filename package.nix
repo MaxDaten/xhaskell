@@ -1,4 +1,5 @@
 final: prev: {
+  ghc = prev.haskell.compiler.ghc946;
   haskell =
     prev.haskell
     // {
@@ -6,6 +7,17 @@ final: prev: {
         prev.haskell.packageOverrides hself hsuper
         // {
           xhaskell = hself.callCabal2nix "xhaskell" ./. { };
+          lucid2 =
+            let
+              src = builtins.fetchGit {
+                url = "https://github.com/chrisdone/lucid.git";
+                rev = "25712e5cb0dc04bba86b29d201c6413d35d8760a";
+              };
+            in
+            hself.callCabal2nix "lucid2"
+              ("${src}/lucid2")
+              { };
+
           servant-lucid2 = hself.callCabal2nix "servant-lucid2"
             (builtins.fetchGit {
               url = "https://github.com/Briends/servant-lucid2.git";
