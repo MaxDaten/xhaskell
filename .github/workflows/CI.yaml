@@ -34,4 +34,7 @@ jobs:
         env:
           GCLOUD_GITHUB_ACTIONS_SA: ${{ secrets.GCLOUD_GITHUB_ACTIONS_SA }}
         run: |
-          nix develop . --impure -c bash -c 'skopeo --version && echo "$GCLOUD_GITHUB_ACTIONS_SA" | skopeo login -u _json_key_base64 --password-stdin "europe-west3-docker.pkg.dev" && nix run -L .#packages.${{ matrix.system }}.container-xhaskell-x86_64-linux.copyToRegistry --impure'
+          nix develop . --impure -c bash -c \
+            'skopeo --version && \
+            echo "$GCLOUD_GITHUB_ACTIONS_SA" | skopeo login -u _json_key_base64 --password-stdin "europe-west3-docker.pkg.dev" && \
+            nix run -L .#packages.${{ matrix.system }}.container-xhaskell-x86_64-linux.copyToRegistry --impure'
