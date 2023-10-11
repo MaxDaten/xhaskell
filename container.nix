@@ -7,6 +7,7 @@
         containerPlatforms = [ "x86_64-linux" "aarch64-linux" ];
         mergeAttrsList = lib.foldl lib.mergeAttrs { };
         forAllContainerPlatforms = f: mergeAttrsList (lib.forEach containerPlatforms f);
+        registry = "europe-west3-docker.pkg.dev/ai-playground-c437/docker";
       in
       forAllContainerPlatforms (ws: withSystem ws ({ config, system, ... }:
         let
@@ -23,7 +24,7 @@
         in
         {
           "container-xhaskell-${system}" = nix2container.buildImage {
-            name = "xhaskell";
+            name = "${registry}/xhaskell";
             config = {
               entrypoint = [ "${lib.getExe pkgs.xhaskell}" ];
               Env = [
