@@ -28,5 +28,6 @@ jobs:
       - name: 🚛 Build Container
         run: |
           nix develop . --impure --accept-flake-config
-          echo "${{ env.GCLOUD_GITHUB_ACTIONS_SA }}" | skopeo login -u _json_key --password-stdin "europe-west3-docker.pkg.dev"
+          echo "${{ vars.GCLOUD_GITHUB_ACTIONS_SA }}" | jq .project_id
+          echo "${{ vars.GCLOUD_GITHUB_ACTIONS_SA }}" | skopeo login -u _json_key --password-stdin "europe-west3-docker.pkg.dev"
           nix build -L '.#packages.${{ matrix.system }}.container-xhaskell-x86_64-linux.copyToRegistry' --impure --accept-flake-config
