@@ -29,7 +29,5 @@ jobs:
         env:
           GCLOUD_GITHUB_ACTIONS_SA: ${{ secrets.GCLOUD_GITHUB_ACTIONS_SA }}
         run: |
-          echo "$GCLOUD_GITHUB_ACTIONS_SA"
-          echo "$GCLOUD_GITHUB_ACTIONS_SA" | jq .project_id
           echo "$GCLOUD_GITHUB_ACTIONS_SA" | skopeo login -u _json_key --password-stdin "europe-west3-docker.pkg.dev"
-          nix build -L '.#packages.${{ matrix.system }}.container-xhaskell-x86_64-linux.copyToRegistry' --impure --accept-flake-config
+          nix run -L '.#packages.${{ matrix.system }}.container-xhaskell-x86_64-linux.copyToRegistry' --impure --accept-flake-config
