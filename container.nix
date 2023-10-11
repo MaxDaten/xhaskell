@@ -24,7 +24,12 @@
         {
           "container-xhaskell-${system}" = nix2container.buildImage {
             name = "xhaskell";
-            config.entrypoint = [ "${lib.getExe pkgs.xhaskell}" ];
+            config = {
+              entrypoint = [ "${lib.getExe pkgs.xhaskell}" ];
+              env = {
+                "XHASKELL_PORT" = "80";
+              };
+            };
             maxLayers = 100;
           };
         })
