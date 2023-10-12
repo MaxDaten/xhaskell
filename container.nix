@@ -28,7 +28,7 @@
             config = {
               entrypoint = [ "${lib.getExe pkgs.xhaskell}" ];
               Env = [
-                "XHASKELL_PORT=80"
+                "PORT=80"
               ];
             };
             maxLayers = 100;
