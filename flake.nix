@@ -18,7 +18,7 @@
     allow-broken = true;
   };
 
-  outputs = inputs@{ nixpkgs, flake-parts, nix2container, nixpkgs-stable, ... }:
+  outputs = inputs@{ self, nixpkgs, flake-parts, nix2container, nixpkgs-stable, ... }:
 
     flake-parts.lib.mkFlake { inherit inputs; } (
       { flake-parts-lib, withSystem, ... }: {
@@ -51,6 +51,20 @@
 
             gcloud-run-deploy-container = {
               registry = "europe-west3-docker.pkg.dev/ai-playground-c437/docker";
+
+              containers = {
+                xhaskell = {
+                  image = system: {
+                    config = {
+                      entrypoint = [ "${lib.getExe self.packages.${system}.xhaskell}" ];
+                      Env = [
+                        "PORT=80"
+                      ];
+                    };
+                    maxLayers = 100;
+                  };
+                };
+              };
             };
 
             devenv.shells.default = {
@@ -84,6 +98,7 @@
             };
 
             packages.default = pkgs.xhaskell;
+            packages.xhaskell = pkgs.xhaskell;
             apps.default.program = pkgs.xhaskell;
           };
 
