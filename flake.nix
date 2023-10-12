@@ -49,6 +49,10 @@
 
             treefmt.config = import ./treefmt.nix { inherit pkgs config; };
 
+            gcloud-run-deploy-container = {
+              registry = "europe-west3-docker.pkg.dev/ai-playground-c437/docker";
+            };
+
             devenv.shells.default = {
               name = "xhaskell";
 
