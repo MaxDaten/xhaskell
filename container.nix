@@ -1,5 +1,4 @@
-{ nixpkgs }:
-{ config, lib, flake-parts-lib, withSystem, ... }: {
+{ lib, flake-parts-lib, ... }: {
   options = {
     perSystem = flake-parts-lib.mkPerSystemOption (
       perSystem@{ config
@@ -31,8 +30,15 @@
             }
           );
 
-        # imageType = inputs'.nix2container.packages.nix2container.image.type;
-        containerType = lib.types.anything;
+
+        containerType = lib.types.submodule {
+          options = {
+            image = lib.mkOption {
+              type = lib.types.functionTo lib.types.attrs;
+              default = system: { };
+            };
+          };
+        };
       in
       {
 
@@ -55,16 +61,15 @@
             default = { };
             example = lib.literalExpression ''
               {
-                # create devShells.default
                 service-a = {
-                  image = system: nix2container.buildImage {
-                    name = "service-a";
+                  image = system: {
                     config = {
-                      entrypoint = [ "''${lib.getExe self'.packages.''${system}.hello}" ];
+                      entrypoint = [ "''${lib.getExe self.packages.''${system}.default}" ];
                       Env = [
                         "PORT=80"
                       ];
                     };
+                    maxLayers = 100;
                   };
                 };
               };
