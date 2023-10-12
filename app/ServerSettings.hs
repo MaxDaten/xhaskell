@@ -1,34 +1,24 @@
-{-# LANGUAGE RecordWildCards #-}
-
 module ServerSettings where
 
-import System.Environment.Blank (getEnvDefault)
+import Data.Maybe (fromMaybe)
+import System.Environment (lookupEnv)
 
-envPrefix :: String
-envPrefix = "XHASKELL_"
+type Port = Int
 
 data ServerSettings = ServerSettings
-  { port :: Int,
+  { port :: Port,
     staticDir :: FilePath
   }
   deriving (Show)
 
-defaultServerSettings :: ServerSettings
-defaultServerSettings =
+serverSettingsWithEnv :: IO ServerSettings
+serverSettingsWithEnv =
   ServerSettings
-    { port = 8080,
-      staticDir = "app/static"
-    }
+    <$> lookupPort
+    <*> lookupStaticDir
 
-devServerSettings :: ServerSettings
-devServerSettings =
-  ServerSettings
-    { port = 4242,
-      staticDir = "app/static"
-    }
+lookupPort :: IO Int
+lookupPort = read . fromMaybe "8080" <$> lookupEnv "PORT"
 
-fromEnv :: ServerSettings -> IO ServerSettings
-fromEnv defaultSettings = do
-  port <- read <$> getEnvDefault (envPrefix <> "PORT") (show (port defaultSettings))
-  staticDir <- getEnvDefault (envPrefix <> "STATIC_DIR") (staticDir defaultSettings)
-  return (ServerSettings {..})
+lookupStaticDir :: IO FilePath
+lookupStaticDir = fromMaybe "app/static" <$> lookupEnv "STATIC_DIR"

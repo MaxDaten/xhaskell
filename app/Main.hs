@@ -23,7 +23,7 @@ import Servant
     type (:>),
   )
 import Servant.HTML.Lucid (HTML)
-import ServerSettings (ServerSettings (..), defaultServerSettings, devServerSettings, fromEnv)
+import ServerSettings (ServerSettings (..), serverSettingsWithEnv)
 import Text.Printf (printf)
 
 type API =
@@ -35,24 +35,21 @@ type API =
 api :: Proxy API
 api = Proxy
 
-server :: Server API
-server =
+main :: IO ()
+main = mainWithSettings =<< serverSettingsWithEnv
+
+mainWithSettings :: ServerSettings -> IO ()
+mainWithSettings settings@ServerSettings {..} = do
+  printf "Running on port %d\n" port
+  printf "Visit: http://localhost:%d/index.html\n" port
+  run port (app settings)
+
+server :: ServerSettings -> Server API
+server ServerSettings {..} =
   return root
     :<|> return root
     :<|> promptHandler
-    :<|> serveDirectoryWebApp "app/static"
+    :<|> serveDirectoryWebApp staticDir
 
-app :: Application
-app = serve api server
-
-main :: IO ()
-main = mainWithSettings =<< fromEnv defaultServerSettings
-
-mainForDevelopment :: IO ()
-mainForDevelopment = mainWithSettings =<< fromEnv devServerSettings
-
-mainWithSettings :: ServerSettings -> IO ()
-mainWithSettings ServerSettings {..} = do
-  printf "Running on port %d\n" port
-  printf "Visit: http://localhost:%d/index.html\n" port
-  run port app
+app :: ServerSettings -> Application
+app = serve api . server
