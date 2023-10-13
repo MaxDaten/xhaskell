@@ -1,24 +1,30 @@
-{ lib, flake-parts-lib, ... }: {
+{ lib, flake-parts-lib, inputs, ... }: {
   options = {
     perSystem = flake-parts-lib.mkPerSystemOption (
       perSystem@{ config
       , self'
       , inputs'
+      , pkgs
+      , system
       , ...
       }:
       let
         cfg = config.gcloud-run-deploy-container;
+
         nix2container = inputs'.nix2container.packages.nix2container;
+
         mergeAttrsList = lib.foldl lib.mergeAttrs { };
+
         forAllContainerPlatforms = f: mergeAttrsList (lib.forEach cfg.platforms f);
 
-        containerDefPerSystem = system: definitionAttrs: lib.mapAttrs'
-          (containerName: config:
-            lib.nameValuePair
-              "container-${containerName}-${system}"
-              (buildImage containerName (config.image system))
-          )
-          definitionAttrs;
+        containerDefPerSystem = system: definitionAttrs:
+          lib.mapAttrs'
+            (containerName: config:
+              lib.nameValuePair
+                "container-${containerName}-${system}"
+                (buildImage containerName (config.image (cfg.pkgs system)))
+            )
+            definitionAttrs;
 
         buildImage = name: args:
           nix2container.buildImage (
@@ -29,7 +35,6 @@
                 else cfg.registry + "/" + name;
             }
           );
-
 
         containerType = lib.types.submodule {
           options = {
@@ -54,6 +59,15 @@
             type = lib.types.listOf lib.types.str;
             default = [ "x86_64-linux" "aarch64-linux" ];
             description = "The platforms to deploy to";
+          };
+
+          pkgs = lib.mkOption {
+            type = lib.types.functionTo lib.types.attrs;
+            default = crossSystem: import inputs.nixpkgs {
+              inherit crossSystem;
+              localSystem = system;
+            };
+            description = "The nixpkgs to use for building the container";
           };
 
           containers = lib.mkOption {

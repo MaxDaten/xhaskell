@@ -32,13 +32,12 @@
         perSystem = { config, self', inputs', pkgs, system, lib, ... }:
           let
             ghc = pkgs.haskell.compiler.ghc946;
-            packageOverlay = import ./package.nix;
           in
           {
             _module.args.pkgs = import nixpkgs {
               inherit system;
               overlays = [
-                packageOverlay
+                self.overlays.default
               ];
             };
             # Per-system attributes can be defined here. The self' and inputs'
@@ -50,11 +49,20 @@
             gcloud-run-deploy-container = {
               registry = "europe-west3-docker.pkg.dev/ai-playground-c437/docker";
 
+              pkgs = crossSystem: import nixpkgs {
+                inherit crossSystem;
+                localSystem = system;
+
+                overlays = [
+                  self.overlays.default
+                ];
+              };
+
               containers = {
                 xhaskell = {
-                  image = system: {
+                  image = pkgs: {
                     config = {
-                      entrypoint = [ "${lib.getExe self.packages.${system}.xhaskell}" ];
+                      entrypoint = [ "${lib.getExe pkgs.xhaskell}" ];
                       Env = [
                         "PORT=80"
                       ];
@@ -100,7 +108,9 @@
             apps.default.program = pkgs.xhaskell;
           };
 
-        flake = { };
+        flake = {
+          overlays.default = import ./package.nix;
+        };
 
       }
     );
