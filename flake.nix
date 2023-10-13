@@ -4,7 +4,6 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     # nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.05";
-    nixpkgs-stable.url = "github:NixOS/nixpkgs/nixos-23.05";
     devenv.url = "github:cachix/devenv";
     nix2container.url = "github:nlewo/nix2container";
     nix2container.inputs.nixpkgs.follows = "nixpkgs";
@@ -18,7 +17,7 @@
     allow-broken = true;
   };
 
-  outputs = inputs@{ self, nixpkgs, flake-parts, nix2container, nixpkgs-stable, ... }:
+  outputs = inputs@{ self, nixpkgs, flake-parts, nix2container, ... }:
 
     flake-parts.lib.mkFlake { inherit inputs; } (
       { flake-parts-lib, withSystem, ... }: {
