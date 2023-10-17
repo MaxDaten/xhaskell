@@ -12,8 +12,8 @@ jobs:
         include:
           - os: ubuntu-beta
             system: x86_64-linux
-          - os: macos-latest-xlarge
-            system: aarch64-darwin
+          - os: macos-latest
+            system: x86_64-darwin
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
