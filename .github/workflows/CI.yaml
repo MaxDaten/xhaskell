@@ -31,6 +31,7 @@ jobs:
       - name: 📦 Build Package
         run: nix build -L '.#packages.${{ matrix.system }}.default' --impure
       - name: 🚛 Build Container
+        if: ${{ matrix.system == 'x86_64-linux' }}
         env:
           GCLOUD_GITHUB_ACTIONS_SA: ${{ secrets.GCLOUD_GITHUB_ACTIONS_SA }}
         run: |
