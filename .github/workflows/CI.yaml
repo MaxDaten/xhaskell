@@ -33,10 +33,11 @@ jobs:
       - name: 🚛 Build Container
         if: ${{ matrix.system == 'x86_64-linux' }}
         env:
-          GOOGLE_CREDENTIALS: ${{ secrets.GCLOUD_GITHUB_ACTIONS_SA }}
+          GOOGLE_CREDENTIALS_BASE64: ${{ secrets.GCLOUD_GITHUB_ACTIONS_SA }}
         run: |
           nix develop . --impure -c bash -c \ '
             skopeo --version && \
-            echo "$GOOGLE_CREDENTIALS" | skopeo login -u _json_key_base64 --password-stdin "https://europe-west3-docker.pkg.dev" && \
+            export GOOGLE_CREDENTIALS=$(echo "$GOOGLE_CREDENTIALS_BASE64" | base64 -d) && \
+            echo "$GOOGLE_CREDENTIALS" | skopeo login -u _json_key --password-stdin "https://europe-west3-docker.pkg.dev" && \
             nix run -L .#container-xhaskell-x86_64-linux.deployGceCloudRun --impure -- plan
           '
