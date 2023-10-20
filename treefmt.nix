@@ -1,7 +1,7 @@
-{ pkgs, ... }:
+{ pkgs, config, ... }:
 {
   # Used to find the project root
-  projectRootFile = "flake.nix";
+  inherit (config.flake-root) projectRootFile;
   programs.hlint.enable = true;
   programs.ormolu.enable = true;
   programs.nixpkgs-fmt.enable = true;

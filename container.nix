@@ -26,15 +26,51 @@
             )
             definitionAttrs;
 
+        artifact-registry = "${cfg.location}-docker.pkg.dev/${cfg.project_id}/${cfg.repository-name}";
+
         buildImage = name: args:
-          nix2container.buildImage (
-            args // {
-              name =
-                if cfg.registry == null
-                then name
-                else cfg.registry + "/" + name;
-            }
-          );
+          let
+            image = nix2container.buildImage
+              (
+                args // {
+                  name = artifact-registry + "/" + name;
+                }
+              );
+          in
+          image // {
+            deployGceCloudRun = deployGceCloudRun image;
+          };
+
+        # Deploy to GCE Cloud Run via Terraform configuration
+        # in ./deployment
+        deployGceCloudRun = image:
+          let
+            deploymentConfigDir = "deployment";
+
+            vars = {
+              inherit artifact-registry;
+              project_id = cfg.project_id;
+              location = cfg.location;
+              image-name = builtins.baseNameOf image.imageName;
+              image-tag = image.imageTag;
+            };
+
+            var-file = pkgs.writeText "terraform.tfvars.json" (builtins.toJSON vars);
+          in
+          pkgs.writeShellScriptBin "deploy-gce-cloud-run" ''
+            set -x
+            set -e
+            ${lib.getExe image.copyToRegistry}
+            
+            flake_root=$(${lib.getExe config.flake-root.package})
+            export TF_CLI_ARGS_plan="-var-file=\"${var-file}\""
+            
+            echo "Deploying ${vars.image-name}:${vars.image-tag} to GCE Cloud Run..."
+            ${lib.getExe pkgs.terraform} -chdir="''${flake_root}/${deploymentConfigDir}" init
+            ${lib.getExe pkgs.terraform} -chdir="''${flake_root}/${deploymentConfigDir}" "$@"
+          '';
+
+        # Module Type Definition
 
         containerType = lib.types.submodule {
           options = {
@@ -49,11 +85,29 @@
 
         # Module Configuration
         options.gcloud-run-deploy-container = {
-          registry = lib.mkOption {
+          project_id = lib.mkOption {
             type = lib.types.str;
-            default = "ghcr.io";
-            description = "The container registry to deploy to";
+            description = "The GCP project to deploy to";
           };
+
+          location = lib.mkOption {
+            type = lib.types.str;
+            description = "The GCP location to deploy to";
+          };
+
+          repository-name = lib.mkOption {
+            type = lib.types.str;
+            description = ''
+              The GCP Artifact Registry docker/container repository to deploy to. 
+              Without prefix like `europe-west3-docker.pkg.dev/my-project/`.
+            '';
+          };
+
+          # registry = lib.mkOption {
+          #   type = lib.types.str;
+          #   default = "ghcr.io";
+          #   description = "The container registry to deploy to";
+          # };
 
           platforms = lib.mkOption {
             type = lib.types.listOf lib.types.str;

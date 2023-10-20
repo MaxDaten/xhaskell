@@ -9,6 +9,7 @@
     nix2container.inputs.nixpkgs.follows = "nixpkgs";
     mk-shell-bin.url = "github:rrbutani/nix-mk-shell-bin";
     treefmt-nix.url = "github:numtide/treefmt-nix";
+    flake-root.url = "github:srid/flake-root";
   };
 
   nixConfig = {
@@ -17,24 +18,34 @@
     allow-broken = true;
   };
 
-  outputs = inputs@{ self, nixpkgs, flake-parts, nix2container, ... }:
+  outputs = inputs@{ self, nixpkgs, flake-parts, nix2container, flake-root, ... }:
 
     flake-parts.lib.mkFlake { inherit inputs; } (
       { flake-parts-lib, withSystem, ... }: {
+
         imports = [
+          inputs.flake-root.flakeModule
           inputs.devenv.flakeModule
           inputs.treefmt-nix.flakeModule
           ./container.nix
         ];
+
         systems = [ "x86_64-linux" "i686-linux" "x86_64-darwin" "aarch64-linux" "aarch64-darwin" ];
 
         perSystem = { config, self', inputs', pkgs, system, lib, ... }:
           let
             ghc = pkgs.haskell.compiler.ghc946;
+            google-cloud-project = "ai-playground-c437";
           in
           {
+            flake-root.projectRootFile = "flake.nix";
             _module.args.pkgs = import nixpkgs {
               inherit system;
+
+              config = {
+                allowUnfree = true;
+              };
+
               overlays = [
                 self.overlays.default
               ];
@@ -46,7 +57,9 @@
             treefmt.config = import ./treefmt.nix { inherit pkgs config; };
 
             gcloud-run-deploy-container = {
-              registry = "europe-west3-docker.pkg.dev/ai-playground-c437/docker";
+              project_id = google-cloud-project;
+              location = "europe-west3";
+              repository-name = "docker";
 
               pkgs = crossSystem: import nixpkgs {
                 inherit crossSystem;
@@ -61,7 +74,7 @@
                 xhaskell = {
                   image = pkgs: {
                     config = {
-                      entrypoint = [ "${lib.getExe pkgs.xhaskell}" ];
+                      # entrypoint = [ "${lib.getExe pkgs.xhaskell}" ];
                       Env = [
                         "PORT=80"
                       ];
@@ -95,11 +108,17 @@
                 pkgs.haskellPackages.ghcid
 
                 pkgs.skopeo
+                pkgs.google-cloud-sdk
+                pkgs.terraform
                 config.treefmt.build.wrapper
               ] ++ lib.attrValues config.treefmt.build.programs;
 
               scripts.dev.exec = "ghcid";
               scripts.prod.exec = "${lib.getExe pkgs.xhaskell}";
+
+              enterShell = ''
+                gcloud config set project ${google-cloud-project}
+              '';
             };
 
             packages.default = pkgs.xhaskell;
