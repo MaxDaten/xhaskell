@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "bradlc.vscode-tailwindcss",
+    "haskell.haskell",
+    "berberman.vscode-cabal-fmt",
+    "pinage404.nix-extension-pack"
+  ]
+}
