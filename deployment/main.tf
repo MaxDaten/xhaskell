@@ -30,6 +30,10 @@ resource "google_cloud_run_v2_service" "default" {
   }
 }
 
+data "google_service_account" "github-actions-sa" {
+  account_id = "github-actions"
+}
+
 # Service Account for this Service
 
 resource "google_service_account" "default" {
@@ -43,5 +47,5 @@ resource "google_service_account" "default" {
 resource "google_service_account_iam_member" "github-actions-sa-actAs" {
   service_account_id = google_service_account.default.name
   role               = "roles/iam.serviceAccountTokenCreator"
-  member             = "serviceAccount:github-actions-sa@${var.project_id}.iam.gserviceaccount.com"
+  member             = data.google_service_account.github-actions-sa.member
 }
