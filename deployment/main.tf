@@ -8,6 +8,7 @@ resource "google_cloud_run_v2_service" "default" {
     timeout                          = "300s"
     max_instance_request_concurrency = 80
     execution_environment            = "EXECUTION_ENVIRONMENT_GEN1"
+    service_account                  = google_service_account.default.email
 
     containers {
       image = "${var.artifact-registry}/${var.image-name}:${var.image-tag}"
@@ -27,4 +28,11 @@ resource "google_cloud_run_v2_service" "default" {
       max_instance_count = 2
     }
   }
+}
+
+# Service Account for this Service
+
+resource "google_service_account" "default" {
+  account_id   = "service-account-${var.image-name}"
+  display_name = "Service Account for ${var.image-name}"
 }
