@@ -28,6 +28,7 @@
           inputs.devenv.flakeModule
           inputs.treefmt-nix.flakeModule
           ./container.nix
+          ./nix/modules/tailwindcss.nix
         ];
 
         systems = [ "x86_64-linux" "i686-linux" "x86_64-darwin" "aarch64-linux" "aarch64-darwin" ];
@@ -56,6 +57,16 @@
 
             # Formatting of all source files
             treefmt.config = import ./treefmt.nix { inherit pkgs config; };
+
+            tailwindcss = {
+              plugins = [
+                "@tailwindcss/forms"
+                "@tailwindcss/aspect-ratio"
+                "@tailwindcss/language-server"
+                "@tailwindcss/line-clamp"
+                "@tailwindcss/typography"
+              ];
+            };
 
             # Deploy to Google Cloud Run
             gcloud-run-deploy-container = {
@@ -118,6 +129,7 @@
                 pkgs.skopeo
                 pkgs.google-cloud-sdk
                 pkgs.terraform
+                config.tailwindcss.build.cli
                 config.treefmt.build.wrapper
               ] ++ lib.attrValues config.treefmt.build.programs;
 
