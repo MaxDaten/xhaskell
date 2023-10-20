@@ -27,7 +27,7 @@
           inputs.flake-root.flakeModule
           inputs.devenv.flakeModule
           inputs.treefmt-nix.flakeModule
-          ./container.nix
+          ./nix/modules/container.nix
           ./nix/modules/tailwindcss.nix
         ];
 
