@@ -11,7 +11,7 @@
       let
         cfg = config.tailwindcss;
 
-        tailwindPkgsWithPlugins = pkgs.tailwindcss.overrideAttrs (oldAttrs: {
+        tailwindPkgsWithPlugins = pkgs.nodePackages.tailwindcss.overrideAttrs (oldAttrs: {
           plugins = lib.forEach cfg.plugins (plugin: pkgs.nodePackages.${plugin});
         });
       in
