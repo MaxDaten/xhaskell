@@ -65,7 +65,7 @@
             ${lib.getExe image.copyToRegistry}
             
             flake_root=$(${lib.getExe config.flake-root.package})
-            export TF_CLI_ARGS_plan="-var-file=\"${var-file}\""
+            export TF_CLI_ARGS="-var-file=\"${var-file}\""
             
             echo "Deploying ${vars.image-name}:${vars.image-tag} to GCE Cloud Run..."
             ${lib.getExe pkgs.terraform} -chdir="''${flake_root}/${deploymentConfigDir}" init
