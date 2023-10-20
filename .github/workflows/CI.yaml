@@ -35,9 +35,5 @@ jobs:
         env:
           GOOGLE_CREDENTIALS_BASE64: ${{ secrets.GCLOUD_GITHUB_ACTIONS_SA }}
         run: |
-          nix develop . --impure -c bash -c \ '
-            skopeo --version && \
-            export GOOGLE_CREDENTIALS=$(echo "$GOOGLE_CREDENTIALS_BASE64" | base64 -d) && \
-            echo "$GOOGLE_CREDENTIALS" | skopeo login -u _json_key --password-stdin "https://europe-west3-docker.pkg.dev" && \
-            nix run -L .#container-xhaskell-x86_64-linux.deployGceCloudRun --impure -- plan
-          '
+          export GOOGLE_CREDENTIALS=$(echo "$GOOGLE_CREDENTIALS_BASE64" | base64 -d)
+          nix run -L .#container-xhaskell-x86_64-linux.deployGceCloudRun --impure -- plan
