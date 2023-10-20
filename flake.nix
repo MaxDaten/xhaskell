@@ -54,9 +54,12 @@
             # module parameters provide easy access to attributes of the same
             # system.
 
+            # Formatting of all source files
             treefmt.config = import ./treefmt.nix { inherit pkgs config; };
 
+            # Deploy to Google Cloud Run
             gcloud-run-deploy-container = {
+
               project_id = google-cloud-project;
               location = "europe-west3";
               repository-name = "docker";
@@ -71,6 +74,7 @@
               };
 
               containers = {
+
                 xhaskell = {
                   image = pkgs: {
                     config = {
@@ -82,9 +86,13 @@
                     maxLayers = 100;
                   };
                 };
+
               };
+
             };
 
+
+            # Development Shell
             devenv.shells.default = {
               name = "xhaskell";
 
