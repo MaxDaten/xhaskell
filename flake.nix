@@ -78,7 +78,7 @@
                 xhaskell = {
                   image = pkgs: {
                     config = {
-                      # entrypoint = [ "${lib.getExe pkgs.xhaskell}" ];
+                      entrypoint = [ "${lib.getExe pkgs.xhaskell}" ];
                       Env = [
                         "PORT=80"
                       ];
