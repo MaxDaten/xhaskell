@@ -18,7 +18,7 @@ resource "google_cloud_run_v2_service" "default" {
           cpu    = "1000m"
           memory = "128Mi"
         }
-        cpu_idle          = false
+        cpu_idle          = true
         startup_cpu_boost = true
       }
     }
@@ -35,4 +35,13 @@ resource "google_cloud_run_v2_service" "default" {
 resource "google_service_account" "default" {
   account_id   = "service-account-${var.image-name}"
   display_name = "Service Account for ${var.image-name}"
+}
+
+
+# actAs for github-actions-sa
+
+resource "google_service_account_iam_member" "github-actions-sa-actAs" {
+  service_account_id = google_service_account.default.name
+  role               = "roles/iam.serviceAccountTokenCreator"
+  member             = "serviceAccount:github-actions-sa@${var.project_id}.iam.gserviceaccount.com"
 }
