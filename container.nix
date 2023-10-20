@@ -60,7 +60,7 @@
           pkgs.writeShellScriptBin "deploy-gce-cloud-run" ''
             set -x
             set -e
-            echo "$GOOGLE_CREDENTIALS" | skopeo login -u _json_key --password-stdin "https:/${cfg.location}-docker.pkg.dev"
+            echo "$GOOGLE_CREDENTIALS" | skopeo login -u _json_key --password-stdin "https://${cfg.location}-docker.pkg.dev"
             ${lib.getExe image.copyToRegistry}
             
             flake_root=$(${lib.getExe config.flake-root.package})
