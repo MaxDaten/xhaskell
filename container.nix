@@ -60,6 +60,7 @@
           pkgs.writeShellScriptBin "deploy-gce-cloud-run" ''
             set -x
             set -e
+            cat ${image}
             echo "$GOOGLE_CREDENTIALS" | ${lib.getExe pkgs.skopeo} login -u _json_key --password-stdin "https://${cfg.location}-docker.pkg.dev"
             ${lib.getExe image.copyToRegistry}
             
