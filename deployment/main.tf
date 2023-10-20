@@ -33,7 +33,7 @@ resource "google_cloud_run_v2_service" "default" {
 # Service Account for this Service
 
 resource "google_service_account" "default" {
-  account_id   = "service-account-${var.image-name}"
+  account_id   = "${var.image-name}-sa"
   display_name = "Service Account for ${var.image-name}"
 }
 
