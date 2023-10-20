@@ -27,4 +27,19 @@ resource "google_cloud_run_v2_service" "default" {
       max_instance_count = 2
     }
   }
+  depends_on = [google_cloud_run_v2_service_iam_member.github-actions-sa]
+}
+
+# data of current used service account
+data "google_service_account" "github-actions-sa" {
+  account_id = "github-actions"
+}
+
+# Allow github actions to deploy to google cloud run
+resource "google_cloud_run_v2_service_iam_member" "github-actions-sa" {
+  project  = var.project_id
+  location = var.location
+  name     = var.image-name
+  role     = "roles/run.admin"
+  member   = google_service_account.github-actions-sa.member
 }
