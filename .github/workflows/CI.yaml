@@ -36,4 +36,4 @@ jobs:
           GOOGLE_CREDENTIALS_BASE64: ${{ secrets.GCLOUD_GITHUB_ACTIONS_SA }}
         run: |
           export GOOGLE_CREDENTIALS=$(echo "$GOOGLE_CREDENTIALS_BASE64" | base64 -d)
-          nix run -L .#container-xhaskell-x86_64-linux.deployGceCloudRun --impure -- plan
+          nix run -L .#container-xhaskell-x86_64-linux.deployGceCloudRun --impure -- apply -auto-approve
