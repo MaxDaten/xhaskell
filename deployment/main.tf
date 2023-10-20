@@ -12,6 +12,9 @@ resource "google_cloud_run_v2_service" "default" {
 
     containers {
       image = "${var.artifact-registry}/${var.image-name}:${var.image-tag}"
+      ports {
+        container_port = 8080
+      }
 
       resources {
         limits = {
