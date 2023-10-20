@@ -41,5 +41,5 @@ resource "google_cloud_run_v2_service_iam_member" "github-actions-sa" {
   location = var.location
   name     = var.image-name
   role     = "roles/run.admin"
-  member   = google_service_account.github-actions-sa.member
+  member   = data.google_service_account.github-actions-sa.member
 }
