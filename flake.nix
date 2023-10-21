@@ -66,6 +66,7 @@
                 "@tailwindcss/line-clamp"
                 "@tailwindcss/typography"
               ];
+              inputCss = ./app/static/style.css;
             };
 
             # Deploy to Google Cloud Run

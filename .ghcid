@@ -1,3 +1,4 @@
 --command=cabal repl
+--verbose
 --test=Main.main
 --reload=xhaskell.cabal,cabal.project,app/templates/*
