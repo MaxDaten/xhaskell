@@ -104,7 +104,7 @@
       let
         cfg = config.tailwindcss;
         output-css = pkgs.runCommand cfg.outputCssFileName { } ''
-          ${lib.getExe cfg.build.cli} -o $out
+          ${lib.getExe cfg.build.cli} --output $out
         '';
       in
       {

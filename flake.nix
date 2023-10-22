@@ -134,12 +134,55 @@
                 config.treefmt.build.wrapper
               ] ++ lib.attrValues config.treefmt.build.programs;
 
-              scripts.dev.exec = "ghcid";
+              # scripts.dev.exec = "ghcid";
               scripts.prod.exec = "${lib.getExe pkgs.xhaskell}";
 
               enterShell = ''
                 gcloud config set project ${google-cloud-project}
               '';
+
+              env.STATIC_DIR = config.devenv.shells.default.env.DEVENV_STATE + "/xhaskell/static";
+
+              # Development setup
+              process.implementation = "process-compose";
+              processes = {
+
+                watch-statics.exec = ''
+                  cp -r "app/static/" "$STATIC_DIR"
+                  ${pkgs.fswatch}/bin/fswatch -0 "app/static/" | while read -d "" event; \
+                  do
+                    echo "''${event}"
+                    cp -r "''${event}" "$STATIC_DIR"
+                  done
+                '';
+
+                watch-style = {
+                  exec = ''
+                    set -euo pipefail
+                    set -x
+                    outPath=$STATIC_DIR
+                    mkdir -p $outPath
+                    ${lib.getExe config.tailwindcss.build.cli} \
+                      # macos requires always
+                      --watch=always \
+                      --input "app/static/style.css" \
+                      --output "$outPath/style.css"
+                  '';
+                };
+
+                dev = {
+                  exec = "ghcid";
+                  process-compose = {
+                    depends_on.watch-style.condition = "process_started";
+                    depends_on.watch-statics.condition = "process_started";
+                    readiness_probe = {
+                      exec.command = "curl -s http://localhost:8080/";
+                      initial_delay_seconds = 2;
+                      period_seconds = 30;
+                    };
+                  };
+                };
+              };
             };
 
             packages.default = pkgs.xhaskell;
@@ -154,3 +197,4 @@
       }
     );
 }
+
