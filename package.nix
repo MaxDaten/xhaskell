@@ -6,7 +6,11 @@ final: prev: {
       packageOverrides = hself: hsuper:
         prev.haskell.packageOverrides hself hsuper
         // {
-          xhaskell = hself.callCabal2nix "xhaskell" ./. { };
+          xhaskell = hself.developPackage {
+            name = "xhaskell";
+            root = ./.;
+            withHoogle = false;
+          };
           lucid2 =
             let
               src = builtins.fetchGit {
