@@ -186,7 +186,7 @@
                       initial_delay_seconds = 2;
                       period_seconds = 30;
                     };
-                    shutdown.signal = 2;
+                    shutdown.signal = 2; # SIGINT (Ctrl-C) to ghcid
                   };
                 };
               };
