@@ -30,3 +30,4 @@ cabal.project.local~
 index.html
 flake.nix
 result
+repl-result-out
