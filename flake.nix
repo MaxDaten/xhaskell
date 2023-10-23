@@ -139,10 +139,17 @@
                 gcloud config set project ${google-cloud-project}
               '';
 
-              env.STATIC_DIR = config.devenv.shells.default.env.DEVENV_STATE + "/xhaskell/static";
+              env.STATIC_DIR = "${config.devenv.shells.default.env.DEVENV_STATE}/xhaskell/static";
 
               # Development setup
-              process.implementation = "process-compose";
+              process = {
+                implementation = "process-compose";
+                before = ''
+                  echo "Creating $STATIC_DIR"
+                  mkdir -p $STATIC_DIR
+                '';
+              };
+
               processes = {
 
                 watch-statics.exec = ''
@@ -158,12 +165,10 @@
                   exec = ''
                     set -euo pipefail
                     set -x
-                    outPath=$STATIC_DIR
-                    mkdir -p $outPath
                     ${lib.getExe config.tailwindcss.build.cli} \
                       --watch=always \
                       --input "app/static/style.css" \
-                      --output "$outPath/style.css"
+                      --output "$STATIC_DIR/style.css"
                   '';
                 };
 
