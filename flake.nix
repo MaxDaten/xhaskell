@@ -98,7 +98,6 @@
                     maxLayers = 100;
                   };
                 };
-
               };
 
             };
@@ -134,7 +133,6 @@
                 config.treefmt.build.wrapper
               ] ++ lib.attrValues config.treefmt.build.programs;
 
-              # scripts.dev.exec = "ghcid";
               scripts.prod.exec = "${lib.getExe pkgs.xhaskell}";
 
               enterShell = ''
@@ -163,7 +161,6 @@
                     outPath=$STATIC_DIR
                     mkdir -p $outPath
                     ${lib.getExe config.tailwindcss.build.cli} \
-                      # macos requires always
                       --watch=always \
                       --input "app/static/style.css" \
                       --output "$outPath/style.css"
@@ -180,6 +177,7 @@
                       initial_delay_seconds = 2;
                       period_seconds = 30;
                     };
+                    shutdown.signal = 2;
                   };
                 };
               };
