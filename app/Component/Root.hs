@@ -19,7 +19,7 @@ root = do
       meta_ [name_ "viewport", content_ "width=device-width, initial-scale=1"]
       link_ [rel_ "stylesheet", type_ "text/css", href_ "style.css"]
       link_ [rel_ "manifest", href_ "site.webmanifest"]
-      tailwind
+      -- tailwind
       useHyperscript
       -- https://htmx.org/extensions/
       htmx
