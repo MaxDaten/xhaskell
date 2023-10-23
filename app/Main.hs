@@ -40,7 +40,7 @@ main = mainWithSettings =<< serverSettingsWithEnv
 
 mainWithSettings :: ServerSettings -> IO ()
 mainWithSettings settings@ServerSettings {..} = do
-  printf "Running on port %d\n" port
+  printf "%s\n" (show settings)
   printf "Visit: http://localhost:%d/index.html\n" port
   run port (app settings)
 
