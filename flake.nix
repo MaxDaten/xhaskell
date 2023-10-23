@@ -89,10 +89,14 @@
 
                 xhaskell = {
                   image = pkgs: {
+                    copyToRoot = [
+                      config.packages.xhaskell-static-files
+                    ];
                     config = {
                       entrypoint = [ "${lib.getExe pkgs.xhaskell}" ];
                       Env = [
                         "PORT=80"
+                        "STATIC_DIR=/var/www"
                       ];
                     };
                     maxLayers = 100;
@@ -190,6 +194,17 @@
 
             packages.default = pkgs.xhaskell;
             packages.xhaskell = pkgs.xhaskell;
+            packages.xhaskell-static-files = pkgs.runCommandLocal "xhaskell-static-files"
+              {
+                src_dir = ./app/static;
+                out_dir = "/var/www";
+              } ''
+              set -euo pipefail
+              set -x
+              mkdir -p $out$out_dir
+              cp -v -R $src_dir/. $out$out_dir/
+              cp -vf ${config.packages.tailwindcss-output-css} $out$out_dir/${config.packages.tailwindcss-output-css.name}
+            '';
             apps.default.program = pkgs.xhaskell;
           };
 
