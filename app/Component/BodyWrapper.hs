@@ -9,6 +9,7 @@ bodyWrapper :: (Monad m) => HtmlT m () -> HtmlT m ()
 bodyWrapper content =
   body_ [class_ "bg-gradient-to-br from-gray-900/50 via-blue-900/50 to-blue-950/50 w-full h-screen"] $ do
     header []
+    hr_ [class_ "border-blue-400/10 w-2/3 mx-auto my-4"]
     main_ [class_ "flex flex-col justify-center my-10"] $
       do
         div_ [class_ "flex items-center min-w-full justify-center"] $ do
