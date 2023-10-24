@@ -200,6 +200,8 @@
 
             packages.default = pkgs.xhaskell;
             packages.xhaskell = pkgs.xhaskell;
+
+            # Use symlinkJoin
             packages.xhaskell-static-files = pkgs.runCommandLocal "xhaskell-static-files"
               {
                 src_dir = ./app/static;

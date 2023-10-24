@@ -65,6 +65,8 @@ executable xhaskell
   -- Modules included in this executable, other than Main.
   other-modules:
     Component.BodyWrapper
+    Component.Header
+    Component.Logo
     Component.Prompt
     Component.Root
     Component.Spinner
