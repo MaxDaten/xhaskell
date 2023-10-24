@@ -22,5 +22,6 @@
   "tailwindCSS.includeLanguages": {
     "haskell": "html"
   },
-  "tailwindCSS.experimental.classRegex": ["class_\\s+\"([^\"]*)"]
+  "tailwindCSS.experimental.classRegex": ["class_\\s+\"([^\"]*)"],
+  "cSpell.words": ["xhaskell"]
 }
