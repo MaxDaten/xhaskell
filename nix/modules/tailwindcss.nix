@@ -17,10 +17,9 @@
 
         tailwind-config-js =
           let
-            plugins = lib.concatStringsSep ",\n" (lib.forEach cfg.plugins (plugin: "require('${plugin}')"));
             content = lib.concatStringsSep ", " (lib.forEach cfg.content (content: "'${content}'"));
           in
-          pkgs.writeText "tailwind.config.js" (lib.debug.traceVal ''
+          pkgs.writeText "tailwind.config.js" ''
             /** @type {import('tailwindcss').Config} */
             module.exports = {
               content: [
@@ -32,7 +31,7 @@
               plugins: [
               ],
             }
-          '');
+          '';
 
         tailwindWrapper =
           pkgs.writeShellScriptBin "tailwindcss" ''
