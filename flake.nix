@@ -59,6 +59,13 @@
             treefmt.config = import ./treefmt.nix { inherit pkgs config; };
 
             tailwindcss = {
+              src = ./app;
+              inputCss = ./app/static/style.css;
+              # Pattern relative to src
+              content = [
+                "./**/*.hs"
+                "./templates/**/*"
+              ];
               plugins = [
                 "@tailwindcss/forms"
                 "@tailwindcss/aspect-ratio"
@@ -66,7 +73,6 @@
                 "@tailwindcss/line-clamp"
                 "@tailwindcss/typography"
               ];
-              inputCss = ./app/static/style.css;
             };
 
             # Deploy to Google Cloud Run
@@ -200,7 +206,6 @@
                 out_dir = "/var/www";
               } ''
               set -euo pipefail
-              set -x
               mkdir -p $out$out_dir
               cp -v -R $src_dir/. $out$out_dir/
               cp -vf ${config.packages.tailwindcss-output-css} $out$out_dir/${config.packages.tailwindcss-output-css.name}

@@ -18,9 +18,9 @@
         tailwind-config-js =
           let
             plugins = lib.concatStringsSep ",\n" (lib.forEach cfg.plugins (plugin: "require('${plugin}')"));
-            content = lib.concatStringsSep ", " (lib.forEach cfg.contentPattern (content: "'${content}'"));
+            content = lib.concatStringsSep ", " (lib.forEach cfg.content (content: "'${content}'"));
           in
-          pkgs.writeText "tailwind.config.js" ''
+          pkgs.writeText "tailwind.config.js" (lib.debug.traceVal ''
             /** @type {import('tailwindcss').Config} */
             module.exports = {
               content: [
@@ -32,15 +32,16 @@
               plugins: [
               ],
             }
-          '';
+          '');
 
-        tailwindWrapper = pkgs.writeShellScriptBin "tailwindcss" ''
-          set -ex
-          ${tailwindcssWithPlugins}/bin/tailwindcss \
-            --config "${tailwind-config-js}" \
-            --input "${cfg.inputCss}" \
-            "$@"
-        '';
+        tailwindWrapper =
+          pkgs.writeShellScriptBin "tailwindcss" ''
+            set -ex
+            ${tailwindcssWithPlugins}/bin/tailwindcss \
+              --config "${tailwind-config-js}" \
+              --input "${cfg.inputCss}" \
+              "$@"
+          '';
       in
       {
 
@@ -62,11 +63,19 @@
             '';
           };
 
-          contentPattern = lib.mkOption {
+          content = lib.mkOption {
             type = lib.types.listOf lib.types.str;
-            default = [ "app/**/*.hs" ];
+            default = [ ];
             description = ''
-              The pattern to match the content files.
+              Content path pattern to use for removing unused classes
+            '';
+          };
+
+          src = lib.mkOption {
+            type = lib.types.path;
+            default = null;
+            description = ''
+              Content paths to use for removing unused classes
             '';
           };
 
@@ -103,9 +112,12 @@
       }:
       let
         cfg = config.tailwindcss;
-        output-css = pkgs.runCommand cfg.outputCssFileName { } ''
-          ${lib.getExe cfg.build.cli} --output $out
-        '';
+        output-css = pkgs.stdenv.mkDerivation {
+          inherit (cfg) src;
+          name = cfg.outputCssFileName;
+          nativeBuildInputs = [ cfg.build.cli ];
+          buildPhase = "find . && ${lib.getExe cfg.build.cli} --output $out";
+        };
       in
       {
         packages.tailwindcss = cfg.build.cli;
