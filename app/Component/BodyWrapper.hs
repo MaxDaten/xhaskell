@@ -11,6 +11,6 @@ bodyWrapper content =
       h1_ [class_ "text-4xl font-black font-serif text-purple-500"] $
         do span_ [class_ "text-purple-200 underline"] "Ask" <> span_ " Anyting!"
     main_ [class_ "flex flex-col justify-center my-10"] $ do
-      div_ [class_ "flex justify-center"] $ do
-        div_ [class_ "w-1/2 max-w-md border rounded-3xl bg-violet-500 bg-gradient-to-br from-purple-600 via-violet-600 to-indigo-600 border-gray-400 px-16 py-8 shadow-indigo-500/50 shadow-lg ring-1 ring-inset ring-white/20"] $ do
+      div_ [class_ "flex items-center min-w-full justify-center"] $ do
+        div_ [class_ "w-2/3 max-w-xl border rounded-3xl bg-violet-500 bg-gradient-to-br from-purple-600 via-violet-600 to-indigo-600 border-gray-400 md:px-8 md:py-8 py-4 px-4 shadow-indigo-500/50 shadow-lg ring-1 ring-inset ring-white/20"] $ do
           content
