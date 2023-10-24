@@ -32,6 +32,11 @@ resource "google_cloud_run_v2_service" "default" {
       max_instance_count = 2
     }
   }
+
+  timeouts {
+    create = "10m"
+    update = "10m"
+  }
 }
 
 data "google_service_account" "github-actions-sa" {
