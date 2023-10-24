@@ -61,14 +61,14 @@
             set -x
             set -e
             cat ${image}
-            echo "$GOOGLE_CREDENTIALS" | ${lib.getExe pkgs.skopeo} login -u _json_key --password-stdin "https://${cfg.location}-docker.pkg.dev"
+            echo "$GOOGLE_CREDENTIALS" | ${pkgs.skopeo}/bin/skopeo login -u _json_key --password-stdin "https://${cfg.location}-docker.pkg.dev"
             ${lib.getExe image.copyToRegistry}
             
             flake_root=$(${lib.getExe config.flake-root.package})
             export TF_CLI_ARGS="-var-file=\"${var-file}\""
             
             echo "Deploying ${vars.image-name}:${vars.image-tag} to GCE Cloud Run..."
-            # export TF_LOG=DEBUG
+            export TF_LOG=DEBUG
             ${lib.getExe pkgs.terraform} -chdir="''${flake_root}/${deploymentConfigDir}" init
             ${lib.getExe pkgs.terraform} -chdir="''${flake_root}/${deploymentConfigDir}" "$@"
           '';
