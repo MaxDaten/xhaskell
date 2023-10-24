@@ -7,7 +7,7 @@ resource "google_cloud_run_v2_service" "default" {
   template {
     timeout                          = "300s"
     max_instance_request_concurrency = 80
-    execution_environment            = "EXECUTION_ENVIRONMENT_GEN1"
+    execution_environment            = "EXECUTION_ENVIRONMENT_GEN1" # Faster cold starts worse network performance
     service_account                  = google_service_account.default.email
 
     containers {
