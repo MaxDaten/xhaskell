@@ -105,12 +105,6 @@
             '';
           };
 
-          # registry = lib.mkOption {
-          #   type = lib.types.str;
-          #   default = "ghcr.io";
-          #   description = "The container registry to deploy to";
-          # };
-
           platforms = lib.mkOption {
             type = lib.types.listOf lib.types.str;
             default = [ "x86_64-linux" "aarch64-linux" ];
@@ -149,10 +143,6 @@
 
         # Module Implementation
         config.packages = forAllContainerPlatforms (system: containerDefPerSystem system cfg.containers);
-
-        # config.devenv.shells.default = {
-        #   scripts.deploy.exec = "echo 'Deploying...' ";
-        # };
       }
     );
   };
