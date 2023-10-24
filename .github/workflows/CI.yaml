@@ -37,6 +37,7 @@ jobs:
           GOOGLE_CREDENTIALS_BASE64: ${{ secrets.GCLOUD_GITHUB_ACTIONS_SA }}
         with:
           max_attempts: 2
+          timeout_seconds: 30
           retry_wait_seconds: 5
           command: |
             export GOOGLE_CREDENTIALS=$(echo "$GOOGLE_CREDENTIALS_BASE64" | base64 -d)
