@@ -13,6 +13,7 @@ resource "google_cloud_run_v2_service" "default" {
     containers {
       image = "${var.artifact-registry}/${var.image-name}:${var.image-tag}"
       ports {
+        name           = "h2c"
         container_port = 8080
       }
 
