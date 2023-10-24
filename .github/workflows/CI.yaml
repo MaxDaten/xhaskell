@@ -30,15 +30,10 @@ jobs:
         run: nix build -L '.#devShells.${{ matrix.system }}.default' --impure
       - name: 📦 Build Package
         run: nix build -L '.#packages.${{ matrix.system }}.default' --impure
-      - uses: nick-fields/retry@v2 # Sad workaround for terraform error Error 403: Permission 'run.operations.get' denied on resource
-        name: 🚛 Build Container
+      - name: 🚛 Build Container
         if: ${{ matrix.system == 'x86_64-linux' }}
         env:
           GOOGLE_CREDENTIALS_BASE64: ${{ secrets.GCLOUD_GITHUB_ACTIONS_SA }}
-        with:
-          max_attempts: 2
-          timeout_seconds: 30
-          retry_wait_seconds: 5
-          command: |
-            export GOOGLE_CREDENTIALS=$(echo "$GOOGLE_CREDENTIALS_BASE64" | base64 -d)
-            nix run -L .#container-xhaskell-x86_64-linux.deployGceCloudRun --impure -- apply -auto-approve
+        run: |
+          export GOOGLE_CREDENTIALS=$(echo "$GOOGLE_CREDENTIALS_BASE64" | base64 -d)
+          nix run -L .#container-xhaskell-x86_64-linux.deployGceCloudRun --impure -- apply -auto-approve
