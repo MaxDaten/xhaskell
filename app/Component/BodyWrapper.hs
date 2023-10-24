@@ -8,7 +8,7 @@ import Lucid
 bodyWrapper :: (Monad m) => HtmlT m () -> HtmlT m ()
 bodyWrapper content =
   body_ [class_ "bg-gradient-to-br from-gray-900/50 via-blue-900/50 to-blue-950/50 w-full h-screen"] $ do
-    header [class_ "bg-gradient-to-br from-gray-900/50 via-blue-900/50 to-blue-950/50"]
+    header []
     main_ [class_ "flex flex-col justify-center my-10"] $
       do
         div_ [class_ "flex items-center min-w-full justify-center"] $ do
