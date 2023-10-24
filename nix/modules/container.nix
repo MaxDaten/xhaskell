@@ -60,15 +60,21 @@
           pkgs.writeShellScriptBin "deploy-gce-cloud-run" ''
             set -x
             set -e
+
             cat ${image}
-            echo "$GOOGLE_CREDENTIALS" | ${pkgs.skopeo}/bin/skopeo login -u _json_key --password-stdin "https://${cfg.location}-docker.pkg.dev"
+
+            if [ -f "$GOOGLE_CREDENTIALS" ]; then
+              cat "$GOOGLE_CREDENTIALS" | ${pkgs.skopeo}/bin/skopeo login -u _json_key --password-stdin "https://${cfg.location}-docker.pkg.dev"
+            else
+              echo "$GOOGLE_CREDENTIALS" | ${pkgs.skopeo}/bin/skopeo login -u _json_key --password-stdin "https://${cfg.location}-docker.pkg.dev"
+            fi
+
             ${lib.getExe image.copyToRegistry}
             
             flake_root=$(${lib.getExe config.flake-root.package})
             export TF_CLI_ARGS="-var-file=\"${var-file}\""
             
             echo "Deploying ${vars.image-name}:${vars.image-tag} to GCE Cloud Run..."
-            export TF_LOG=DEBUG
             ${lib.getExe pkgs.terraform} -chdir="''${flake_root}/${deploymentConfigDir}" init
             ${lib.getExe pkgs.terraform} -chdir="''${flake_root}/${deploymentConfigDir}" "$@"
           '';
