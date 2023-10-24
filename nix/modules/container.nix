@@ -68,7 +68,7 @@
             export TF_CLI_ARGS="-var-file=\"${var-file}\""
             
             echo "Deploying ${vars.image-name}:${vars.image-tag} to GCE Cloud Run..."
-            export TF_LOG=DEBUG
+            # export TF_LOG=DEBUG
             ${lib.getExe pkgs.terraform} -chdir="''${flake_root}/${deploymentConfigDir}" init
             ${lib.getExe pkgs.terraform} -chdir="''${flake_root}/${deploymentConfigDir}" "$@"
           '';
