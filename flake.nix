@@ -45,15 +45,14 @@
         ];
 
         perSystem = { config, self', inputs', pkgs, system, lib, ... }:
-          let
-            google-cloud-project = "ai-playground-c437";
-          in
-          {
+        {
             _module.args.pkgs = import nixpkgs { config.allowUnfree = true; inherit system; };
 
             flake-root.projectRootFile = "flake.nix";
             treefmt.config = import ./treefmt.nix { inherit pkgs config; };
-          };
+
+            devShells.default = self'.devShells.xhaskell;
+        };
       }).config.flake;
 }
 
