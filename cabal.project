@@ -6,8 +6,10 @@ source-repository-package
     type: git
     location: https://github.com/Briends/servant-lucid2.git
     tag: ba035126b063988a7779d13650f180501a9e43d0
+    --sha256: 09nbrdfr0z1mrq27x52i6qi1sr5blbzg1vlw0gy9vzs361qqhw2r
 
 source-repository-package
     type: git
     location: https://github.com/Briends/lucid2-hyperscript.git
     tag: 8d37673c3b10c4163db24626c94ed24dff5f0905
+    --sha256: 1bg8055p7nyrnyyn835l4x9qa2622jp7bns3xxa1g0bzmy6218lc

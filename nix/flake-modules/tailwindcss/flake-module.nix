@@ -1,4 +1,4 @@
-{ lib, flake-parts-lib, inputs, ... }: {
+{ lib, flake-parts-lib, ... }: {
   options = {
     perSystem = flake-parts-lib.mkPerSystemOption (
       { config
