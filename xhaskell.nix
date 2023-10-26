@@ -12,10 +12,10 @@
       pkgs = config.haskell-nix.pkgs;
 
       xhaskell = pkgs.haskell-nix.cabalProject {
+        inherit (config.haskell-nix) evalSystem;
         name = "xhaskell";
         src = ./.;
         compiler-nix-name = "ghc928";
-        evalSystem = "aarch64-darwin";
       };
 
       haskellNixFlake = xhaskell.flake { };

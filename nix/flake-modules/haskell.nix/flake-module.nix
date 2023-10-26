@@ -20,6 +20,15 @@ in
           '';
           default = inputs'.haskell-nix.legacyPackages;
         };
+
+        evalSystem = mkOption {
+          type = types.str;
+          description = ''
+            The system to evaluate haskell-nix expressions for. Required
+            for `nix flake show/check` to work propably.
+          '';
+          default = "aarch64-darwin";
+        };
       };
   };
 }
