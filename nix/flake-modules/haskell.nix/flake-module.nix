@@ -7,7 +7,7 @@ let
     ;
 in
 {
-  perSystem = { config, self', inputs', system, ... }: 
+  perSystem = { config, self', inputs', system, ... }:
     {
       options.haskell-nix = {
         pkgs = mkOption {
@@ -30,5 +30,5 @@ in
           default = "aarch64-darwin";
         };
       };
-  };
+    };
 }

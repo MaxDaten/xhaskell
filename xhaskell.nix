@@ -1,10 +1,10 @@
 { self, lib, ... }:
 {
-  perSystem = {
-      config
+  perSystem =
+    { config
     , self'
     , inputs'
-    , ... 
+    , ...
     }:
     let
       # A flake-module in nix/flake-modules/haskell.nix defines haskell-nix
@@ -41,6 +41,7 @@
                 config.packages.xhaskell-static-files
               ];
               config = {
+                # TODO: Use platform specific xhaskell
                 # entrypoint = [ "${lib.getExe pkgs.xhaskell}" ];
                 Env = [
                   "PORT=80"
