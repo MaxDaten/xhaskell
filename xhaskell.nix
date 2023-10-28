@@ -1,19 +1,20 @@
 { self, lib, ... }:
 {
   perSystem =
-    { config
+    perSystem@{ config
     , self'
     , inputs'
+    , pkgs
     , ...
     }:
     let
       # A flake-module in nix/flake-modules/haskell.nix defines haskell-nix
       # packages once, so we can reuse it here, it's more performant.
-      pkgs = config.haskell-nix.pkgs;
+      hpkgs = config.haskell-nix.pkgs;
       compiler-nix-name = "ghc928";
-      ghc = pkgs.haskell-nix.compiler.${compiler-nix-name};
+      ghc = hpkgs.haskell-nix.compiler.${compiler-nix-name};
 
-      xhaskell = pkgs.haskell-nix.cabalProject {
+      xhaskell = hpkgs.haskell-nix.cabalProject {
         inherit (config.haskell-nix) evalSystem;
         inherit compiler-nix-name;
         name = "xhaskell";
@@ -26,34 +27,57 @@
       haskellNixFlake = xhaskell.flake { };
 
       google-cloud-project = "ai-playground-c437";
+      nix2container = inputs'.nix2container.packages.nix2container;
+
+
     in
     {
-      gcloud-run-deploy-container = {
-        project_id = google-cloud-project;
-        location = "europe-west3";
-        repository-name = "docker";
 
+      multiplatform-container = {
         containers = {
-
-          xhaskell = {
-            image = pkgs: {
-              copyToRoot = [
-                config.packages.xhaskell-static-files
+          xhaskell = targetSystem: nix2container.buildImage {
+            name = "xhaskell";
+            copyToRoot = [
+              config.packages.xhaskell-static-files
+            ];
+            config = {
+              entrypoint = [ "${lib.getExe (lib.traceVal config.packages).${targetSystem}.xhaskell}" ];
+              Env = [
+                "PORT=80"
+                "STATIC_DIR=/var/www"
               ];
-              config = {
-                # TODO: Use platform specific xhaskell
-                # entrypoint = [ "${lib.getExe pkgs.xhaskell}" ];
-                Env = [
-                  "PORT=80"
-                  "STATIC_DIR=/var/www"
-                ];
-              };
-              maxLayers = 100;
             };
+            maxLayers = 100;
           };
         };
-
       };
+
+      # gcloud-run-deploy-container = {
+      #   project_id = google-cloud-project;
+      #   location = "europe-west3";
+      #   repository-name = "docker";
+
+      #   containers = {
+
+      #     xhaskell = {
+      #       image = pkgs: {
+      #         copyToRoot = [
+      #           config.packages.xhaskell-static-files
+      #         ];
+      #         config = {
+      #           # TODO: Use platform specific xhaskell
+      #           # entrypoint = [ "${lib.getExe pkgs.xhaskell}" ];
+      #           Env = [
+      #             "PORT=80"
+      #             "STATIC_DIR=/var/www"
+      #           ];
+      #         };
+      #         maxLayers = 100;
+      #       };
+      #     };
+      #   };
+
+      # };
 
 
       tailwindcss = {
@@ -159,8 +183,8 @@
 
 
       # General flake output
-      apps = haskellNixFlake.apps;
-      packages = haskellNixFlake.packages;
+      # apps = haskellNixFlake.apps;
+      # packages = haskellNixFlake.packages;
 
     };
   flake = { };
